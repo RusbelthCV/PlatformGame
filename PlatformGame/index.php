@@ -17,7 +17,7 @@
         }
         case 'login':
         {
-            include_once '/Controller/controller-Comprobar-Login.php';
+            include_once 'Controller/loginUsuarioController.php';
             break;
         }
         

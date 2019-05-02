@@ -14,9 +14,9 @@
 </head>
 <body>
     <div class="container">
-        <section class="row justify-content-center align-items-center">
+        <section class="row" id="form">
             <div class="col-md-6 offset-3">
-                <form action="Controller/portadaController.php" method="post">
+                <form action="index.php?section=login" method="post">
                     <label for="nombre" class="label-control">Correo:</label>
                     <input type="text" class="form-control" id="nombre" name="nombre">
                     <label for="pass">Contraseña:</label>

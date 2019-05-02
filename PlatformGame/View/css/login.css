@@ -10,3 +10,7 @@ body
 {
     visibility: hidden;
 }
+#form
+{
+	margin-top: 20%;
+}
