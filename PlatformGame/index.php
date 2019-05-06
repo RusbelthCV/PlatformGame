@@ -20,6 +20,11 @@
             include_once 'Controller/loginUsuarioController.php';
             break;
         }
+        case 'registro':
+        {
+            include_once 'Controller/Controller-Registro.php';
+            break;
+        }
         
     }
 ?>

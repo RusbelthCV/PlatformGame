@@ -21,7 +21,7 @@
                     <input type="text" class="form-control" id="nombre" name="nombre">
                     <label for="pass">Contraseña:</label>
                     <input type="password" class="form-control" id="pass" name="password">
-                    <a href="" class="btn btn-link" role="button">Regsitrarse</a>
+                    <a href="index.php?section=registro" class="btn btn-link" role="button">Regsitrarse</a>
                     <input type="submit" class="btn btn-primary envio" value="Login">
                     <div class="alert alert-danger alert-dismissible fade show mensaje" id="mensaje">
                         <button type="button" class="close" data-dismiss="alert">&times;</button>

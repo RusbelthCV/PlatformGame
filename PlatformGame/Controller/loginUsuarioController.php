@@ -6,7 +6,7 @@
       $correoUsuario = $_POST['nombre'];
       $contraUsuario = md5($_POST['password']);
       
-      $usuario = new Usuario($correoUsuario,$contraUsuario);
+      $usuario = new Usuario($correoUsuario,$contraUsuario,"");
       $existencias = $usuario->loguearse();
       if($existencias)
       {
