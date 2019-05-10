@@ -1,5 +1,5 @@
 <?php 
-
+  session_start();
   if(isset($_POST['nombre']) || isset($_POST['password']))
   {
       require_once 'Model/usuarioModel.php';
@@ -10,7 +10,7 @@
       $existencias = $usuario->loguearse();
       if($existencias)
       {
-          header("Location:View/index.html");
+        $_SESSION['usuario'] = $_POST['nombre'];
       }
       else
       {
@@ -22,5 +22,4 @@
         </script><?php
       }
   }
-
 ?>
