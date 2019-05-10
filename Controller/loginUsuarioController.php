@@ -7,10 +7,12 @@
       $contraUsuario = md5($_POST['password']);
       
       $usuario = new Usuario($correoUsuario,$contraUsuario,"");
+
       $existencias = $usuario->loguearse();
       if($existencias)
       {
         $_SESSION['usuario'] = $_POST['nombre'];
+        header("Location:View/index.php");
       }
       else
       {

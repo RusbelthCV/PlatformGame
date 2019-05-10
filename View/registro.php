@@ -31,7 +31,7 @@
                     
                     <div class="form-group">
                         <input type="submit" name="submit" id="submit" class="form-submit submit" value="Sign up"/>
-                        <a href="../" class="form-submit submit backB">Atrás</a>
+                        <a href="index.php?section=portada" class="form-submit submit backB">Atrás</a>
                     </div>
                 </form>
             </div>
