@@ -22,23 +22,35 @@ var config =
 		update: update
 	}
 };
-var game = new Phaser.Game(config);
-
+const game = new Phaser.Game(config);
+const gameState = { 
+	vida: 6 ,
+	mov_enemigo1: "izq" //Indica la direccion del movimiento del enemigo1
+};
 
 function preload()
 {
-	
-    
-	this.load.tilemapTiledJSON("mapa","./assets/MapaLVL1.json");
+  this.load.audio('musica_fondo', './assets/SariaSong.mp3')	;
+  this.load.tilemapTiledJSON("mapa","./assets/MapaLVL1.json");
     this.load.image('mapita','assets/spritesheet_ground.png');
     this.load.image('mapitaElement','assets/spritesheet_tiles.png');
-
     this.load.image('fondo','./assets/Fondo_arboles_verde.png');
-
     this.load.spritesheet('personaje','assets/personaje.png',{frameWidth: 34,frameHeight:34});
+    this.load.spritesheet('enemy1','assets/enemigos/enemigo1/PNG/Idle/frame-1.png',{frameWidth: 14,frameHeight:714});
+
 }
 function create()
 {
+	
+
+	function reproducir_music(){
+	 	gameState.incredible=this.sound.add("musica_fondo");
+      	gameState.incredible.play()
+	}
+	gameState.incredible=this.sound.add("musica_fondo");
+      	gameState.incredible.play()
+
+//=========================AÑADIR ELEMENTOS=====================
     map = this.add.tilemap('mapa');
 	var tileSet = map.addTilesetImage("spritesheet_ground","mapita");
 	var tileSet2 = map.addTilesetImage("spritesheet_tiles","mapitaElement");
@@ -48,14 +60,88 @@ function create()
 
 	cursors = this.input.keyboard.createCursorKeys();
 
+	//======================JUGADOR PRINCIPAL=======================
 	player = this.physics.add.sprite(40,60,'personaje');
 	player.setScale(2);
     player.setSize(14,14);
+	//=================END JUGADOR PRINCIPAL=======================
+
+	//=================START ENEMIES=============================
+	enemy1 = this.physics.add.sprite(620,320,'enemy1');
+	enemy1.setScale(0.08);
+	function mover_enemigo(){
+		var inicio_plataforma=630;
+		var fin_plataforma=30;
+		//Movimiento a la izquierda
+		if(enemy1.x<=inicio_plataforma && enemy1.x>=fin_plataforma && gameState.mov_enemigo1=="izq"){
+			enemy1.x-=10;
+		} 
+		//Detecta que ha llegado al final y cambia el sentido
+		 if(enemy1.x<=fin_plataforma ){
+		 	gameState.mov_enemigo1="der";
+		}
+		//Movimiento a la derecha
+		if(gameState.mov_enemigo1=="der"){
+			//Detecta que ha llegado al comienzo de la plataforma y vuelve al inicio
+			if(enemy1.x==inicio_plataforma-10){
+				gameState.mov_enemigo1="izq";
+			}
+			enemy1.x+=10;
+
+		}
+
+	}
+  	//Evento de colision entre enemigo1 y el jugador principal
+  	this.physics.add.collider(player, enemy1, () => {
+	     gameState.incredible.stop();
+
+	    gameState.vida-=1;
+        gameState.vidaText.setText(`Vida: ${gameState.vida}`)
+	    mov_enemigo1.destroy();
+	    this.physics.pause();
+	    this.add.text(180, 250, 'Game Over', { fontSize: '15px', fill: '#000000' });
+	    this.add.text(152, 270, 'Click to Restart', { fontSize: '15px', fill: '#000000' });
+	    
+		//======EVENTO RESTAR GAME=====
+	    this.input.on('pointerup', () =>{
+	      	//gameState.incredible.stop();
+	    	this.scene.restart();	
+
+	    });
+		//======END EVENTO RESTAR GAME=====
+  	});
+  	//Fin del Evento de colision entre enemigo1 y el jugador principal
+
+	//Crear bucle para Musica de fondo
+	const banda_sonora_main = this.time.addEvent({
+			delay: 36000,
+	    	callback: reproducir_music,
+	    	callbackScope: this,
+	    	loop: true,
+		});
+	//Crear bucle para movimiento del enemigo1
+	const mov_enemigo1 = this.time.addEvent({
+		delay: 100,
+    	callback: mover_enemigo,
+    	callbackScope: this,
+    	loop: true,
+	});
+
+	//=================END ENEMIES=============================
+	//=================IDE VIDA===============================
+	gameState.vidaText = this.add.text(16, 16, `Vida: ${gameState.vida}`, { fontSize: '15px', fill: '#000000' })
+	//==================END VIDA=================================
+
+
+    //===========START CAMARA========================
     this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
-	//    this.cameras.main.startFollow(player);
-	    this.cameras.main.startFollow(player);
+    this.cameras.main.startFollow(player);
+    //============END CAMARA========================
 
 
+//============================END AÑADIR ELEMENTOS ===============================================
+
+//================================ANIMACIONES JUGADOR PRINCIPAL==============================
  this.anims.create(
     {
         key:'jump',
@@ -63,10 +149,6 @@ function create()
         frameRate: 10,
         repeat: -1
     });
-
-
-
-
 	this.anims.create(
 	{
 		key:'left',
@@ -74,7 +156,6 @@ function create()
 		frameRate: 22,
 		repeat: -1
 	});
-
 	this.anims.create(
 	{
 		key:'right',
@@ -82,7 +163,6 @@ function create()
 		frameRate: 22,
 		repeat: -1
 	});
-    
 	this.anims.create(
 	{
 		key:'stop',
@@ -90,16 +170,24 @@ function create()
 		frameRate: 1,
 		repeat: -1
 	})
-    var solidos = map.createDynamicLayer("Ground",tileSet,0,0);
+//============================END ANIMACIONES JUGADOR PRINCIPAL==============================
+
+//=============================START COLISIONES ===============================================
+    var solidos = map.createDynamicLayer(0,tileSet,0,0);
     var elementos = map.createDynamicLayer("Agua_elementos",tileSet2,0,0);
 
     //player.setCollideWorldBounds(true);
     player.body.bounce.set(0.3);
     solidos.setCollisionByProperty({Solido:true});
     this.physics.add.collider(player,solidos);
+    this.physics.add.collider(player,enemy1);
+
+    this.physics.add.collider(enemy1,solidos);
+
     this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
     this.physics.world.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
 		
+//==========================END COLISIONES ======================================================
     
 }
 function collisiomHandler()
