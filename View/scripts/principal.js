@@ -2,6 +2,7 @@ var cursors = undefined;
 var fondo;
 var map;
 var player;
+var vidaP;
 var config = 
 {
 	type: Phaser.CANVAS,
@@ -13,7 +14,7 @@ var config =
 		default: 'arcade',
 		arcade:{
 			gravity:{y: 300},
-			debug:false
+			debug:true
 		}
 	},
 	scene: {
@@ -26,47 +27,53 @@ const game = new Phaser.Game(config);
 const gameState = { 
 	vida: 6 ,
 	mov_enemigo1: "izq" //Indica la direccion del movimiento del enemigo1
+	
+
+
 };
 
 function preload()
 {
-  this.load.audio('musica_fondo', './assets/SariaSong.mp3')	;
-  this.load.tilemapTiledJSON("mapa","./assets/MapaLVL1.json");
+  	this.load.audio('musica_fondo', './assets/SariaSong.mp3');
+  	this.load.tilemapTiledJSON("mapa","./assets/MapaLVL1.json");
     this.load.image('mapita','assets/spritesheet_ground.png');
     this.load.image('mapitaElement','assets/spritesheet_tiles.png');
     this.load.image('fondo','./assets/Fondo_arboles_verde.png');
     this.load.spritesheet('personaje','assets/personaje.png',{frameWidth: 34,frameHeight:34});
     this.load.spritesheet('enemy1','assets/enemigos/enemigo1/PNG/Idle/frame-1.png',{frameWidth: 14,frameHeight:714});
+    this.load.image('heart', 'assets/1vida.png');
+    this.load.spritesheet('heartP', 'assets/1vida.png',{frameWidth: 32,frameHeight:32});
+
+
 
 }
 function create()
 {
 	
 
-	function reproducir_music(){
-	 	gameState.incredible=this.sound.add("musica_fondo");
-      	gameState.incredible.play()
-	}
+
 	gameState.incredible=this.sound.add("musica_fondo");
       	gameState.incredible.play()
 
 //=========================AÑADIR ELEMENTOS=====================
+
     map = this.add.tilemap('mapa');
 	var tileSet = map.addTilesetImage("spritesheet_ground","mapita");
 	var tileSet2 = map.addTilesetImage("spritesheet_tiles","mapitaElement");
-
     fondo = this.add.image(320,360,'fondo');
     fondo.setScale(3);
-
 	cursors = this.input.keyboard.createCursorKeys();
 
 	//======================JUGADOR PRINCIPAL=======================
+
 	player = this.physics.add.sprite(40,60,'personaje');
-	player.setScale(2);
-    player.setSize(14,14);
+	//player.setScale(2);
+    player.setSize(12);
+
 	//=================END JUGADOR PRINCIPAL=======================
 
 	//=================START ENEMIES=============================
+
 	enemy1 = this.physics.add.sprite(620,320,'enemy1');
 	enemy1.setScale(0.08);
 	function mover_enemigo(){
@@ -91,12 +98,13 @@ function create()
 		}
 
 	}
+	
   	//Evento de colision entre enemigo1 y el jugador principal
   	this.physics.add.collider(player, enemy1, () => {
-	     gameState.incredible.stop();
-
-	    gameState.vida-=1;
-        gameState.vidaText.setText(`Vida: ${gameState.vida}`)
+  		perder_vida(this.lives);
+	    // gameState.incredible.stop();
+	  //  gameState.vida-=1;
+//        gameState.vidaText.setText(`Vida: ${gameState.vida}`)
 	    mov_enemigo1.destroy();
 	    this.physics.pause();
 	    this.add.text(180, 250, 'Game Over', { fontSize: '15px', fill: '#000000' });
@@ -129,7 +137,21 @@ function create()
 
 	//=================END ENEMIES=============================
 	//=================IDE VIDA===============================
-	gameState.vidaText = this.add.text(16, 16, `Vida: ${gameState.vida}`, { fontSize: '15px', fill: '#000000' })
+	var pos_ini_x=player.x;
+	var pos_ini_y=50;
+	var espacio=0;
+
+
+    this.lives = this.add.group();
+    for(var i=0;i<gameState.vida;i++){
+	this.lives.create(pos_ini_x+espacio,  pos_ini_y, 'heartP').setScrollFactor(0);
+	espacio+=35;
+    }
+	gameState.vidaText = this.add.text(16, 16, `Vida: ${gameState.vida}`, { fontSize: '15px', fill: '#000000' });
+	gameState.vidaText.setScrollFactor(0);
+
+
+	
 	//==================END VIDA=================================
 
 
@@ -175,20 +197,16 @@ function create()
 //=============================START COLISIONES ===============================================
     var solidos = map.createDynamicLayer(0,tileSet,0,0);
     var elementos = map.createDynamicLayer("Agua_elementos",tileSet2,0,0);
-
-    //player.setCollideWorldBounds(true);
     player.body.bounce.set(0.3);
     solidos.setCollisionByProperty({Solido:true});
     this.physics.add.collider(player,solidos);
     this.physics.add.collider(player,enemy1);
-
     this.physics.add.collider(enemy1,solidos);
-
     this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
     this.physics.world.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
 		
 //==========================END COLISIONES ======================================================
-    
+   
 }
 function collisiomHandler()
 {
@@ -201,6 +219,7 @@ function update(time,dt)
 	if(cursors.left.isDown)
 	{
 		player.x-=200*factor;
+
 		player.anims.play('left',true);
 		if(cursors.up.isDown )
     {
@@ -232,4 +251,31 @@ function update(time,dt)
 	{
 		player.anims.play('stop',true);	
 	}
+	if(player.y>2000){
+		perder_vida(this.lives);
+	    	this.scene.restart();	
+
+
+	}
+}
+
+///Funciones
+function perder_vida(lives){
+	    // gameState.incredible.stop();
+	    gameState.vida-=1;
+        gameState.vidaText.setText(`Vida: ${gameState.vida}`)
+	var array_live=lives.getChildren();
+	var invader = Phaser.Utils.Array.RemoveAt(array_live,array_live.length-1);
+	if (invader)
+	{
+	    gameState.incredible.stop();
+		invader.destroy();
+	}
+}
+
+
+
+function reproducir_music(){
+	gameState.incredible=this.sound.add("musica_fondo");
+	gameState.incredible.play()
 }
