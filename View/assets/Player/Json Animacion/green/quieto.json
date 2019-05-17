@@ -1,0 +1,83 @@
+{
+	"textures": [
+		{
+			"image": "quieto.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 677,
+				"h": 442
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "green__0002_idle_3.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 235,
+						"h": 440
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 235,
+						"h": 440
+					},
+					"frame": {
+						"x": 1,
+						"y": 1,
+						"w": 235,
+						"h": 440
+					}
+				},
+				{
+					"filename": "green__0001_idle_2.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 223,
+						"h": 438
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 223,
+						"h": 438
+					},
+					"frame": {
+						"x": 238,
+						"y": 1,
+						"w": 223,
+						"h": 438
+					}
+				},
+				{
+					"filename": "green__0000_idle_1.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 213,
+						"h": 428
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 213,
+						"h": 428
+					},
+					"frame": {
+						"x": 463,
+						"y": 1,
+						"w": 213,
+						"h": 428
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:30e660d5b088c6ffd5f1ca22a0b516cb:e558bdf7ad6a1c3358c10b485c3676b0:12e9299414e07bb34f77588d8eb0fa20$"
+	}
+}

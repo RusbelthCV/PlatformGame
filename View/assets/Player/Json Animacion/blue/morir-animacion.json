@@ -1,0 +1,125 @@
+{
+	"textures": [
+		{
+			"image": "morir.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 415,
+				"h": 1386
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "blue__0023_dead_2.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 413,
+						"h": 329
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 413,
+						"h": 329
+					},
+					"frame": {
+						"x": 1,
+						"y": 1,
+						"w": 413,
+						"h": 329
+					}
+				},
+				{
+					"filename": "blue__0025_dead_4.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 409,
+						"h": 186
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 409,
+						"h": 186
+					},
+					"frame": {
+						"x": 1,
+						"y": 332,
+						"w": 409,
+						"h": 186
+					}
+				},
+				{
+					"filename": "blue__0026_dead_5.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 407,
+						"h": 210
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 407,
+						"h": 210
+					},
+					"frame": {
+						"x": 1,
+						"y": 520,
+						"w": 407,
+						"h": 210
+					}
+				},
+				{
+					"filename": "blue__0024_dead_3.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 386,
+						"h": 241
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 386,
+						"h": 241
+					},
+					"frame": {
+						"x": 1,
+						"y": 732,
+						"w": 386,
+						"h": 241
+					}
+				},
+				{
+					"filename": "blue__0022_dead_1.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 347,
+						"h": 410
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 347,
+						"h": 410
+					},
+					"frame": {
+						"x": 1,
+						"y": 975,
+						"w": 347,
+						"h": 410
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:6f75d921d7bbc923b83db928a6268271:8ec19f4ec422c27f2d22de0e8b42a62a:a3f151cf04631b20ed2de1a4772107e1$"
+	}
+}

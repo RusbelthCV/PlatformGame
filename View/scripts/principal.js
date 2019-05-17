@@ -43,13 +43,31 @@ function preload()
     this.load.spritesheet('enemy1','assets/enemigos/enemigo1/PNG/Idle/frame-1.png',{frameWidth: 14,frameHeight:714});
     this.load.image('heart', 'assets/1vida.png');
     this.load.spritesheet('heartP', 'assets/1vida.png',{frameWidth: 32,frameHeight:32});
-
-
-
 }
-function create()
-{
-	
+function create(dt){
+socket.on('jugador-izq',()=>{
+	player2.x-=3.30000003;	
+	console.log("Este jugador se mueve a la izq");
+	player2.anims.play('left',true);
+
+});	
+
+
+socket.on('jugador-mov-der',()=>{
+
+	console.log("Este jugador se mueve a la derecha");
+	player2.x+=3.30000003;
+	player2.anims.play('right',true);
+
+
+
+});
+socket.on('jugador-mov-top',()=>{
+   player2.y += -6.8900000001;
+    player2.setVelocityY(-11);
+	console.log("Este jugador abusa del fly");
+
+});
 
 
 	gameState.incredible=this.sound.add("musica_fondo");
@@ -66,9 +84,12 @@ function create()
 
 	//======================JUGADOR PRINCIPAL=======================
 
-	player = this.physics.add.sprite(40,60,'personaje');
+	player = this.physics.add.sprite(800,60,'personaje');
 	//player.setScale(2);
-    player.setSize(12);
+	player.setSize(12);
+	player2 = this.physics.add.sprite(800,60,'personaje');
+	//player.setScale(2);
+    player2.setSize(12);
 
 	//=================END JUGADOR PRINCIPAL=======================
 
@@ -196,11 +217,22 @@ function create()
 
 //=============================START COLISIONES ===============================================
     var solidos = map.createDynamicLayer(0,tileSet,0,0);
-    var elementos = map.createDynamicLayer("Agua_elementos",tileSet2,0,0);
-    player.body.bounce.set(0.3);
-    solidos.setCollisionByProperty({Solido:true});
-    this.physics.add.collider(player,solidos);
-    this.physics.add.collider(player,enemy1);
+	var elementos = map.createDynamicLayer("Agua_elementos",tileSet2,0,0);
+	
+
+	player.body.bounce.set(0.3);
+	player2.body.bounce.set(0.3);
+
+	
+	solidos.setCollisionByProperty({Solido:true});
+	
+
+	this.physics.add.collider(player,solidos);
+    this.physics.add.collider(player2,solidos);
+	
+	this.physics.add.collider(player,enemy1);
+    this.physics.add.collider(player2,enemy1);
+	
     this.physics.add.collider(enemy1,solidos);
     this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
     this.physics.world.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
@@ -215,37 +247,41 @@ function collisiomHandler()
 function update(time,dt)
 {
 
+
 	var factor = dt/1000;
 	if(cursors.left.isDown)
 	{
-		player.x-=200*factor;
-
+		player.x-=3.30000003;
+		socket.emit("Jugador-Moviendose-Izq");
+		
 		player.anims.play('left',true);
-		if(cursors.up.isDown )
-    {
-    	this.canJump=false;
-        player.y += -300*factor;
-      player.setVelocityY(-11);
-        player.anims.play('jump',true);
-    }
+		if(cursors.up.isDown ){
+
+			socket.emit("Jugador-Moviendose-top");
+			this.canJump=false;
+			player.y += -6.8900000001;
+			player.setVelocityY(-11);
+			player.anims.play('jump',true);
+   		}
 	}
 	else if(cursors.right.isDown)
 	{
-		player.x +=200*factor;
+		player.x +=3.30000003;
 		player.anims.play('right',true);
-		if(cursors.up.isDown )
-    {
-    	this.canJump=false
-        player.y += -300*factor;
-      player.setVelocityY(-11);
-        player.anims.play('jump',true);
+		socket.emit("Jugador-Moviendose-Der");
+		if(cursors.up.isDown){
+			socket.emit("Jugador-Moviendose-top");
+			this.canJump=false
+			player.y += -6.8900000001;
+			player.setVelocityY(-11);
+			player.anims.play('jump',true);
     }
-	}else if(cursors.up.isDown)
-    {
-    	this.canJump=false;
-        player.y += -300*factor;
-      player.setVelocityY(-11);
-        player.anims.play('jump',true);
+	}else if(cursors.up.isDown){
+		socket.emit("Jugador-Moviendose-top");
+		this.canJump=false;
+		player.y += -6.8900000001;
+		player.setVelocityY(-11);
+		player.anims.play('jump',true);
     }
 	else
 	{
@@ -254,12 +290,10 @@ function update(time,dt)
 	if(player.y>2000){
 		perder_vida(this.lives);
 	    	this.scene.restart();	
-
-
 	}
 }
 
-///Funciones
+///======================================Funciones================================
 function perder_vida(lives){
 	    // gameState.incredible.stop();
 	    gameState.vida-=1;

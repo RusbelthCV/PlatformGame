@@ -1,0 +1,146 @@
+{
+	"textures": [
+		{
+			"image": "morir.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 758,
+				"h": 974
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "green__0023_dead_2.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 413,
+						"h": 329
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 413,
+						"h": 329
+					},
+					"frame": {
+						"x": 1,
+						"y": 1,
+						"w": 413,
+						"h": 329
+					}
+				},
+				{
+					"filename": "green__0021_hurt_4.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 225,
+						"h": 432
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 225,
+						"h": 432
+					},
+					"frame": {
+						"x": 416,
+						"y": 1,
+						"w": 225,
+						"h": 432
+					}
+				},
+				{
+					"filename": "green__0025_dead_4.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 409,
+						"h": 186
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 409,
+						"h": 186
+					},
+					"frame": {
+						"x": 1,
+						"y": 332,
+						"w": 409,
+						"h": 186
+					}
+				},
+				{
+					"filename": "green__0022_dead_1.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 347,
+						"h": 410
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 347,
+						"h": 410
+					},
+					"frame": {
+						"x": 1,
+						"y": 520,
+						"w": 347,
+						"h": 410
+					}
+				},
+				{
+					"filename": "green__0026_dead_5.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 407,
+						"h": 210
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 407,
+						"h": 210
+					},
+					"frame": {
+						"x": 350,
+						"y": 520,
+						"w": 407,
+						"h": 210
+					}
+				},
+				{
+					"filename": "green__0024_dead_3.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 386,
+						"h": 241
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 386,
+						"h": 241
+					},
+					"frame": {
+						"x": 350,
+						"y": 732,
+						"w": 386,
+						"h": 241
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:87e2c00a23a1f37ead0046a2c12baffc:e99f9317f1ee847fa374f75cb3ce813a:47718a37b358f0ed4cbfd68e84a91fce$"
+	}
+}

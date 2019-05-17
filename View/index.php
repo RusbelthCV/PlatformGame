@@ -8,8 +8,16 @@
 		<head>
 		    <meta charset="utf-8">
 		    <title>Juego</title>
-		    <script src="scripts/phaser.min.js"></script>
-		    <script type="text/javascript" src="scripts/principal.js"></script>
+		    <script src="scripts/phaser.js"></script>
+		    <!--<script type="text/javascript" src="scripts/principal.js"></script>-->
+		    <script type="text/javascript" src="scripts/main3.js"></script>
+
+				<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.dev.js"></script>
+    <script>
+        //const socket = io('http://192.168.12.199:2525'); //Clases
+        const socket = io('http://localhost:2525'); //Casa
+
+    </script>
 		</head>
 		<body>
 			<div id="bloque"></div>

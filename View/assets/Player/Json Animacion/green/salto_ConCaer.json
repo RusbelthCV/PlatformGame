@@ -1,0 +1,104 @@
+{
+	"textures": [
+		{
+			"image": "saltoCONcaer.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 1103,
+				"h": 464
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "green__0029_jump_3.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 263,
+						"h": 462
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 263,
+						"h": 462
+					},
+					"frame": {
+						"x": 1,
+						"y": 1,
+						"w": 263,
+						"h": 462
+					}
+				},
+				{
+					"filename": "green__0028_jump_2.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 235,
+						"h": 460
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 235,
+						"h": 460
+					},
+					"frame": {
+						"x": 266,
+						"y": 1,
+						"w": 235,
+						"h": 460
+					}
+				},
+				{
+					"filename": "green__0027_jump_1.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 266,
+						"h": 426
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 266,
+						"h": 426
+					},
+					"frame": {
+						"x": 503,
+						"y": 1,
+						"w": 266,
+						"h": 426
+					}
+				},
+				{
+					"filename": "green__0030_jump_4.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 331,
+						"h": 372
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 331,
+						"h": 372
+					},
+					"frame": {
+						"x": 771,
+						"y": 1,
+						"w": 331,
+						"h": 372
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:6523e7c4ed36bb01e0941533e060431a:28135e9782e938ff3031bcacc34350e0:30efa0c1417082a49b2efb5f09a76318$"
+	}
+}
