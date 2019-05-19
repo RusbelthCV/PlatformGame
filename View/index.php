@@ -10,6 +10,9 @@
 		    <title>Juego</title>
 		    <script src="scripts/phaser.js"></script>
 		    <!--<script type="text/javascript" src="scripts/principal.js"></script>-->
+		    <script type="text/javascript" src="scripts/GameOver_Scene.js"></script>
+		    <script type="text/javascript" src="scripts/LVL_1_Scene.js"></script>
+
 		    <script type="text/javascript" src="scripts/main3.js"></script>
 
 				<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.dev.js"></script>
