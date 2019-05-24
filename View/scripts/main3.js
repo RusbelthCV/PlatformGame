@@ -16,7 +16,7 @@ var config =
         default: 'arcade',
         arcade:{
             gravity:{y: 500},
-            debug:true
+            debug:false
         }
     },
     scene: [LVL_2_Scene,LVL_1_Scene,GameOver_Scene, ]
@@ -31,7 +31,8 @@ const gameState = {
     mov_enemigo1: "izq", //Indica la direccion del movimiento del enemigo1
     score: 0,
     metaP2:false,
-    bonus : ""
+    bonus : "",
+    puente:false
 
 };
     

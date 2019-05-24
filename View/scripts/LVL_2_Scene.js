@@ -33,9 +33,10 @@ class LVL_2_Scene extends Phaser.Scene {
         this.load.spritesheet('puente', 'assets/puente.png',{frameWidth: 116,frameHeight:28});
 
 
-        /*
+        
         //enemigo azul 
-        this.load.spritesheet('enemy1','assets/enemigos/enemigo1/enemy1.png',{frameWidth: 587,frameHeight:691});
+        this.load.spritesheet('dragon','assets/enemigos/enemigo1/dragon.png',{frameWidth: 587,frameHeight:691});
+        /*
         //Enemigo spike
         this.load.image("enemigo","assets/Free Platform Game Assets/Platform Game Assets/Enemies/png/128x128/Saw.png");
         //Cubo de pinchos
@@ -54,9 +55,83 @@ class LVL_2_Scene extends Phaser.Scene {
         
      }
      create(){
+
+
+
+
      	   //Iniciar musica 
         gameState.incredible=this.sound.add("musica_fondo");
         gameState.incredible.play()
+//===================MOVIMIENTO RECIBIDOS DEL SERVIDOR DEL SEGUNDO PLAYER=============================
+        //Detecta si el compañero a perdido vida
+        
+        socket.on('restarVida',()=>{
+            gameStatePredator.vida=20;   
+            gameStatePredator.vivo=true;
+            this.scene.restart();
+            this.physics.pause();
+            this.add.text(180, 250, 'El otro Jugador ha perdido', { fontSize: '15px', fill: '#000000' });
+            this.add.text(152, 270, 'Volveis a Iniciar', { fontSize: '15px', fill: '#000000' });
+    
+        });
+        //Detecta si el compañero a perdido TODAS   las vida
+        socket.on('JugadorMuere',()=>{
+            this.add.text(180, 250, 'Game Over', { fontSize: '15px', fill: '#000000' });
+            this.add.text(152, 270, 'Click to Restart', { fontSize: '15px', fill: '#000000' });    
+        }); 
+        socket.on('jugadorStop',()=>{
+            this.player2.body.setVelocityX(0);
+            this.player2.anims.play('stop2',true);
+
+            console.log("Este jugador se ha detenido");
+            //player2.anims.play('left',true);
+        }); 
+        //Detecta si el compañero se ha movido a la izquierda    
+        socket.on('jugador-izq',()=>{
+            this.player2.body.setVelocityX(-400);
+            this.player2.flipX = true;
+            console.log("Este jugador se mueve a la izq");
+            this.player2.anims.play('run2',true);
+
+            //player2.anims.play('left',true);
+        }); 
+        //Detecta si el compañero se ha movido a la derecha   
+        socket.on('jugador-mov-der',()=>{
+    
+            console.log("Este jugador se mueve a la derecha");
+            this.player2.flipX = false;
+            this.player2.body.setVelocityX(+400);
+            //player2.anims.play('right',true);
+            this.player2.anims.play('run2',true);
+
+        });
+    
+        //Detecta si el compañero ha saltado
+        socket.on('jugador-mov-top',()=>{
+            this.player2.body.setVelocityY(-600);        
+            this.player2.anims.play('salta2',true);
+            console.log("Este jugador abusa del fly");
+        });
+        //Detecta si el compañero ha disparado a la izquierda   
+        socket.on('Jugador-shoot-left',()=>{
+            this.bala.enableBody(true, this.player2.x, this.player2.y, true, true).setVelocity(-2000, 50);
+            this.player2.anims.play('disparar2',true);
+
+            console.log("Dispara a la izquierda");
+
+        });
+        //Detecta si el compañero ha disparado a la derecha   
+    
+        socket.on('Jugador-shoot-right',()=>{
+
+            this.bala.enableBody(true, this.player2.x, this.player2.y, true, true).setVelocity(2000, 50);
+            console.log("Dispara a la derecha");
+            this.player2.anims.play('disparar2',true);
+
+        });    
+
+        
+    //============================END  MOVIMIENTO RECIBIDOS DEL SERVIDOR DEL SEGUNDO PLAYER======================        
     //=========================AÑADIR ELEMENTOS=====================
      	//Añadimos todo lo necesario para insertar el mapa
         this.mapa = this.add.tilemap("mapa"); // Añadimos el mapa
@@ -81,11 +156,7 @@ class LVL_2_Scene extends Phaser.Scene {
         this.player2.setScale(0.25);
         //CREAMOS LA BALA 
         this.bala = this.physics.add.sprite(player.x, player.y, 'bullet');
-        this.bala.disableBody(true, true); 
-    
-
-
-
+        this.bala.disableBody(true, true);   
   //=================END JUGADOR PRINCIPAL=======================
      //================================ANIMACIONES JUGADOR PRINCIPAL==============================
     
@@ -184,20 +255,41 @@ class LVL_2_Scene extends Phaser.Scene {
         }           
         //==================END VIDA=================================
         gameState.espacio=0;
-        //this.puente = this.add.group();
 
-        //this.puente = this.physics.add.sprite(player.x+gameState.espacio, player.y, 'puente').allowGravity = true;
-        	//	this.puente.body.allowGravity = false;
-                ///this.puente.create(1500+gameState.espacio,  1945, 'puente');
-    	this.puente = this.physics.add.sprite(player.x+gameState.espacio, player.y, 'puente').allowGravity = false;
-       	this.puente = this.physics.add.sprite(this.pos_cubo_X,this.altura_cubo,'cubo');
-        this.puente.body.allowGravity = false;
+          //Crear bucle para movimiento del enemigo1
+          const Crearpuente = this.time.addEvent({
+                delay: 10,
+                callback: generarPuente,
+                callbackScope: this,
+                loop: true,
+            });
+        function generarPuente(){
+
+        if(gameState.puente==true){ 
+            for(var i=0;i<14;i++){
+        
+                this.puente = this.add.tileSprite(1465+gameState.espacio,1945,115,27,'puente'); 
+                this.physics.add.existing(this.puente, true);
+                this.physics.add.collider(player, this.puente);
+                gameState.espacio+=115;
+            }
+                this.puente = this.add.tileSprite(1430+gameState.espacio,1945,60,27,'puente'); 
+                this.physics.add.existing(this.puente, true);
+                this.physics.add.collider(player, this.puente);
+                gameState.puente=false;
+                gameState.espacio=0;
+                Crearpuente.destroy();
+            }
+        }
+    
 
 
-        		gameState.espacio+=115;
-            
-     }
+ }
      update(time,dt){
+        if((((player.x>=1296 && player.x<=1400)&&player.y>=1850)||((this.player2.x>=1296 && this.player2.x<=1400)&&this.player2.y>=1850))&&(((player.x>=1296 && player.x<=1400)&&player.y<=1200)||((this.player2.x>=1296 && this.player2.x<=1400)&&this.player2.y<=1200))){
+            gameState.puente=true;
+        }
+
 
         if(player.x<=25){
             player.x=25
@@ -222,7 +314,7 @@ class LVL_2_Scene extends Phaser.Scene {
     
         }
         // jump 
-        if (cursors.up.isDown && player.body.onFloor())
+        if (cursors.up.isDown /*&& player.body.onFloor()*/)
         {
             socket.emit("Jugador-Moviendose-top");
     
@@ -236,13 +328,15 @@ class LVL_2_Scene extends Phaser.Scene {
                 this.bala.enableBody(true, player.x-30, player.y, true, true).setVelocity(-2000, 50);
                 player.anims.play('disparar',true);
                 socket.emit("Jugador-Disparo-Izquierda");
+                alert("playerX"+player.x);
+                alert("playerY"+player.y);
+
        
             } else{
                 this.bala.enableBody(true, player.x+30, player.y, true, true).setVelocity(2000, 50);
                 player.anims.play('disparar',true);
                 socket.emit("Jugador-Disparo-Derecha");  
-            	//var bridgeTile = this.capaElementos.putTileAt(4, 5, 5);
-            	//this.physics.add.tileBody(bridgeTile)
+
         		
 
  
