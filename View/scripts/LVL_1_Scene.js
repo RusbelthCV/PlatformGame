@@ -1,6 +1,6 @@
 class LVL_1_Scene extends Phaser.Scene {
 	constructor(){
-		super({ key: 'LVL_1_Scene' })
+		super({ key: 'LVL_1_Scene' });
     }
 
      preload()
@@ -16,20 +16,33 @@ class LVL_1_Scene extends Phaser.Scene {
         //Player1
         this.load.spritesheet('player','assets/Player/SpriteSheet green/player.png',{frameWidth: 500,frameHeight:714});
             //Animaciones player1
-        this.load.spritesheet('player_correr','assets/Player/SpriteSheet green/correr.png',{frameWidth: 160,frameHeight:443});
-        this.load.spritesheet('player_disparar','assets/Player/SpriteSheet green/Disparar.png',{frameWidth: 370,frameHeight:443});
-        this.load.spritesheet('player_saltar','assets/Player/SpriteSheet green/saltoCONcaer.png',{frameWidth: 370,frameHeight:443});
-        this.load.spritesheet('player_quieto','assets/Player/SpriteSheet green/quieto.png',{frameWidth: 234   ,frameHeight:442});
+        this.load.spritesheet('player_correr','assets/Player/SpriteAlienGreen/run.png',{frameWidth: 218,frameHeight:433});
+        this.load.spritesheet('player_disparar','assets/Player/SpriteAlienGreen/dispara.png',{frameWidth: 486,frameHeight:429.54});
+        this.load.spritesheet('player_saltar','assets/Player/SpriteAlienGreen/salta.png',{frameWidth: 266,frameHeight:449.3});
+        this.load.spritesheet('player_quieto','assets/Player/SpriteAlienGreen/quieto.png',{frameWidth: 235   ,frameHeight:435.33});
         //player2
-        this.load.spritesheet('player2','assets/Player/SpriteSheet blue/player.png',{frameWidth: 500,frameHeight:714});
+        //this.load.spritesheet('player2','assets/Player/SpriteSheet blue/player.png',{frameWidth: 500,frameHeight:714});
+        this.load.spritesheet('player2_correr','assets/Player/SpriteAlienBlue/run.png',{frameWidth: 218,frameHeight:433});
+        this.load.spritesheet('player2_disparar','assets/Player/SpriteAlienBlue/Dispara.png',{frameWidth: 486,frameHeight:438.6363});
+        this.load.spritesheet('player2_saltar','assets/Player/SpriteAlienBlue/salta.png',{frameWidth: 266,frameHeight:449.3});
+        this.load.spritesheet('player2_quieto','assets/Player/SpriteAlienBlue/quieto.png',{frameWidth: 235   ,frameHeight:435.33});
         //Bala
         this.load.image('bullet', 'assets/purple_ball.png',{frameWidth: 500,frameHeight:714});
         //enemigo azul 
         this.load.spritesheet('enemy1','assets/enemigos/enemigo1/enemy1.png',{frameWidth: 587,frameHeight:691});
+        //Enemigo spike
+        this.load.image("enemigo","assets/Free Platform Game Assets/Platform Game Assets/Enemies/png/128x128/Saw.png");
         //Cubo de pinchos
         this.load.spritesheet('cubo','assets/enemigos/Cubo/cubo_sprite.png',{frameWidth: 133,frameHeight:128});
-    
-    
+		//Primer Boss Predator
+        this.load.spritesheet('predator_quieto','assets/enemigos/predator/normal.png',{frameWidth: 230   ,frameHeight:416});
+        this.load.spritesheet('predator_shoot','assets/enemigos/predator/disparaV.png',{frameWidth: 549   ,frameHeight:399 });
+        this.load.spritesheet('predator_morir','assets/enemigos/predator/morir.png',{frameWidth: 363   ,frameHeight:358});
+        this.load.spritesheet('predator_walk','assets/enemigos/predator/walk.png',{frameWidth: 231   ,frameHeight:407});
+        this.load.image("predator_laser",'assets/enemigos/predator/laserpredator.png')
+        //Bonus
+        this.load.image("bonusFly","assets/bonusFly.png");
+
         //Vida
         this.load.spritesheet('heartP', 'assets/1vida.png',{frameWidth: 32,frameHeight:32});
     }
@@ -41,6 +54,8 @@ class LVL_1_Scene extends Phaser.Scene {
         //Detecta si el compañero a perdido vida
         
         socket.on('restarVida',()=>{
+            gameStatePredator.vida=20;   
+            gameStatePredator.vivo=true;
             this.scene.restart();
             this.physics.pause();
             this.add.text(180, 250, 'El otro Jugador ha perdido', { fontSize: '15px', fill: '#000000' });
@@ -50,9 +65,12 @@ class LVL_1_Scene extends Phaser.Scene {
         //Detecta si el compañero a perdido TODAS   las vida
         socket.on('JugadorMuere',()=>{
             this.add.text(180, 250, 'Game Over', { fontSize: '15px', fill: '#000000' });
-            this.add.text(152, 270, 'Click to Restart', { fontSize: '15px', fill: '#000000' });    }); 
-            socket.on('jugadorStop',()=>{
+            this.add.text(152, 270, 'Click to Restart', { fontSize: '15px', fill: '#000000' });    
+        }); 
+        socket.on('jugadorStop',()=>{
             this.player2.body.setVelocityX(0);
+            this.player2.anims.play('stop2',true);
+
             console.log("Este jugador se ha detenido");
             //player2.anims.play('left',true);
         }); 
@@ -61,6 +79,8 @@ class LVL_1_Scene extends Phaser.Scene {
             this.player2.body.setVelocityX(-400);
             this.player2.flipX = true;
             console.log("Este jugador se mueve a la izq");
+            this.player2.anims.play('run2',true);
+
             //player2.anims.play('left',true);
         }); 
         //Detecta si el compañero se ha movido a la derecha   
@@ -70,24 +90,54 @@ class LVL_1_Scene extends Phaser.Scene {
             this.player2.flipX = false;
             this.player2.body.setVelocityX(+400);
             //player2.anims.play('right',true);
+            this.player2.anims.play('run2',true);
+
         });
     
         //Detecta si el compañero ha saltado
         socket.on('jugador-mov-top',()=>{
-            this.player2.body.setVelocityY(-400);        
+            this.player2.body.setVelocityY(-600);        
+            this.player2.anims.play('salta2',true);
             console.log("Este jugador abusa del fly");
         });
         //Detecta si el compañero ha disparado a la izquierda   
         socket.on('Jugador-shoot-left',()=>{
             this.bala.enableBody(true, this.player2.x, this.player2.y, true, true).setVelocity(-2000, 50);
+            this.player2.anims.play('disparar2',true);
+
             console.log("Dispara a la izquierda");
+
         });
         //Detecta si el compañero ha disparado a la derecha   
     
         socket.on('Jugador-shoot-right',()=>{
+
             this.bala.enableBody(true, this.player2.x, this.player2.y, true, true).setVelocity(2000, 50);
             console.log("Dispara a la derecha");
+            this.player2.anims.play('disparar2',true);
+
         });    
+        //Detecta si el predator muere en el otro jugador
+        socket.on('PredatorMuere',()=>{
+            console.log("PredatorMuere");
+                gameStatePredator.vivo=false;
+                this.predator.anims.play('morirPredator',true);
+                this.predator.setSize(1,1);
+                this.predator.y+=16;
+                gameStatePredator.nuevoLaser=false;
+            gameStatePredator.vidaText.setText(`Muerto`);
+
+        }); 
+       socket.on('MetaP2',()=>{
+            console.log("Meta!");
+            gameState.metaP2=true;
+        });         
+       socket.on('No-MetaP2',()=>{
+            console.log("no-Meta!");
+            gameState.metaP2=false;
+        });  
+
+        
     //============================END  MOVIMIENTO RECIBIDOS DEL SERVIDOR DEL SEGUNDO PLAYER======================
     
         //Iniciar musica 
@@ -109,7 +159,7 @@ class LVL_1_Scene extends Phaser.Scene {
         var capaElementos =this.mapa.createDynamicLayer("elementos",tileSetElementos,0,0);
         var capaAgua = this.mapa.createDynamicLayer("agua",tileSetElementos,0,0);
         this.capaMonedas = this.mapa.createDynamicLayer("coinsLayer",tileSetMonedas,0,0);
-        var capaTrampas =this.mapa.createDynamicLayer("trampas",tileSetElementos,0,0);
+        var capaTrampas =this.mapa.createDynamicLayer("trampas",tileSetMapa,0,0);
         //capaMonedas.setScale(0.7);
         //capaMonedas.y+=100;
         //capaMonedas.x+=100;
@@ -123,16 +173,27 @@ class LVL_1_Scene extends Phaser.Scene {
     //======================JUGADOR PRINCIPAL=======================
     
         //JUGADOR1
-        player = this.physics.add.sprite(200, 900, 'player');
+        player = this.physics.add.sprite(200, 900, 'player');//12200
         player.setScale(0.25);
     
         //JUGADOR 2
-        this.player2 = this.physics.add.sprite(200, 900, 'player2');
+        this.player2 = this.physics.add.sprite(10200, 900, 'player2_quieto');
         this.player2.setScale(0.25);
     
         //CREAMOS LA BALA 
         this.bala = this.physics.add.sprite(player.x, player.y, 'bullet');
-        this.bala.disableBody(true, true);    
+        this.bala.disableBody(true, true); 
+        
+        //Predator
+         var fin_plataforma=12700;
+        this.predator = this.physics.add.sprite(fin_plataforma, 1500, 'predator_quieto');
+        gameState.Predator=this.predator;
+        this.predator.setScale(0.35);
+        this.predator.flipX = true;
+
+ 	gameState.predator_laser = this.add.image((gameState.Predator.x-350),(gameState.Predator.y+50), 'predator_laser').setOrigin(0).setScale(0.1 );
+    gameState.speed1 = Phaser.Math.GetSpeed(1500, 3);
+
     
     //=================END JUGADOR PRINCIPAL=======================
     //=================START ENEMIES=============================
@@ -144,8 +205,9 @@ class LVL_1_Scene extends Phaser.Scene {
         this.altura_cubo=490;
         this.enemy_cubo = this.physics.add.sprite(this.pos_cubo_X,this.altura_cubo,'cubo');
         this.enemy_cubo.body.allowGravity = false;
-            
-    
+        this.spike = this.physics.add.image(7883,710,"enemigo");
+        this.physics.add.collider(this.spike,this.capaMapa);
+        
     
     
     
@@ -163,6 +225,7 @@ class LVL_1_Scene extends Phaser.Scene {
              if(this.enemy1.x<=fin_plataforma ){
                 gameState.mov_enemigo1="der";
                 this.enemy1.anims.play('grande',true);
+                this.enemy1.flipX=true;
     
                 this.enemy1.setScale(0.125);
             }
@@ -171,6 +234,8 @@ class LVL_1_Scene extends Phaser.Scene {
                 //Detecta que ha llegado al comienzo de la plataforma y vuelve al inicio
                 if(this.enemy1.x==inicio_plataforma-10){
                     gameState.mov_enemigo1="izq";
+                this.enemy1.flipX=false;
+
                     this.enemy1.anims.play('pequeño',true);
                     this.enemy1.setScale(0.08);
     
@@ -180,6 +245,16 @@ class LVL_1_Scene extends Phaser.Scene {
             }
     
         }
+        //Movimiento de la sierra enemiga.
+        this.tweens.add(
+        {
+            targets:this.spike,
+            x: 6420,
+            duration: 4000,
+            ease: 'Linear',
+            yoyo: true,
+            repeat: -1,
+        });
         
         //Evento de colision entre enemigo1 y el jugador principal
         this.physics.add.collider(player, this.enemy1, () => {
@@ -213,6 +288,41 @@ class LVL_1_Scene extends Phaser.Scene {
             loop: true,
             
         });
+        //Start predator
+
+		const predatorloop = this.tweens.add({
+			targets: this.predator,
+			x: 12200,
+			ease: 'Linear',
+			duration: 1800,
+			repeat: -1,
+			yoyo: true,
+			//onRepeat: growSnowman
+			onRepeat : function() {
+           		gameState.Predator.flipX=true;
+       		 	gameStatePredator.destruyeLaser=false;
+       		 	gameStatePredator.nuevoLaser=true;
+
+
+           		atacar();
+
+
+			}     ,
+			onYoyo : function() {
+      
+           		gameState.Predator.flipX=false;
+           		//atacar();
+        		gameState.Predator.anims.play('predator_walk',true);
+        		gameStatePredator.destruyeLaser=true;
+       		 	gameStatePredator.nuevoLaser=false;
+
+
+
+      }       
+
+		});
+
+        //End Predator
     
         //=================END ENEMIES=============================
         //=================IDE VIDA===============================
@@ -222,17 +332,13 @@ class LVL_1_Scene extends Phaser.Scene {
     
         this.lives = this.add.group();
         if(gameState.vida==0){
+
+    		this.scene.stop('LVL_1_Scene');
+			this.scene.start('GameOver_Scene');
+    
             socket.emit("Jugador-Muere");
-            
-             this.add.text(180, 250, 'Game Over', { fontSize: '15px', fill: '#000000' });
-            this.add.text(152, 270, 'Click to Restart', { fontSize: '15px', fill: '#000000' });
-    
-            //======EVENTO RESTAR GAME=====
-            this.input.on('pointerup', () =>{
-                gameState.incredible.stop();
-                this.scene.restart(); 
-    
-            });
+         
+            gameState.vida=6
                 //this.scene.restart();   
             
             //======END EVENTO RESTAR GAME=====
@@ -243,6 +349,14 @@ class LVL_1_Scene extends Phaser.Scene {
             }
             gameState.vidaText = this.add.text(16, 16, `Vida: ${gameState.vida}`, { fontSize: '15px', fill: '#000000' });
             gameState.vidaText.setScrollFactor(0);
+
+            this.livesPredator = this.add.group();
+            this.livesPredator.create(12370, 1100, 'heartP');
+
+
+            gameStatePredator.MensajeText = this.add.text(12356, 1050, `Vida del Predator`, { fontSize: '30px', fill: '#000000' });
+            gameStatePredator.vidaText = this.add.text(12390, 1080, `x: ${gameStatePredator.vida}`, { fontSize: '30px', fill: '#000000' });
+
     
              //CONTADOR SCORE
             gameState.scoreText = this.add.text(200,16,`Score: ${gameState.score}`,{fontSize:"20px",fill:"#000000"});
@@ -257,7 +371,8 @@ class LVL_1_Scene extends Phaser.Scene {
      
         //COLISIONES ENTRE MAPA Y JUGADORES
         this.capaMapa.setCollisionByProperty({Suelo:true});
-        capaTrampas.setCollisionByProperty({Solido:true});
+        capaTrampas.setCollisionByProperty({Suelo:true});
+        capaAgua.setCollisionByProperty({muerte:true});
     
         this.physics.add.collider(player, this.capaMapa);
     
@@ -266,9 +381,21 @@ class LVL_1_Scene extends Phaser.Scene {
         this.physics.add.collider(this.enemy1,this.capaMapa);
         
         this.physics.add.collider(this.enemy_cubo,this.capaMapa);
-    
+        this.physics.add.collider(this.predator,this.capaMapa);
+
+        
+        //Agua/Lava - Jugador
+        this.physics.add.collider(player,capaAgua,()=>
+            {
+                perder_vida(this.lives);
+                this.physics.pause();
+                this.scene.restart();
+            });
     //===========================================
         this.physics.add.collider(player, capaTrampas,()=>{
+            perder_vida(this.lives);
+            this.physics.pause();
+            this.scene.restart();
         });
     
     
@@ -278,7 +405,23 @@ class LVL_1_Scene extends Phaser.Scene {
             this.physics.pause();
             this.scene.restart();   
         } );
-    
+        this.physics.add.collider(player,this.spike,() => {
+            perder_vida(this.lives);
+            this.physics.pause();
+            this.scene.restart();
+        });
+        this.physics.add.collider(player,this.predator,() => {
+            gameStatePredator.vida=20;
+            perder_vida(this.lives);
+            this.physics.pause();
+            this.scene.restart();
+        });
+ 
+       this.physics.add.collider(player, gameState.predator_laser,() => {
+       	       perder_vida(this.lives);
+            this.physics.pause();
+            this.scene.restart();
+        });
         //this.physics.add.collider(player2,enemy1);
         //COLISIONES BALA 
             //CON EL ENEMIGO 1
@@ -294,11 +437,22 @@ class LVL_1_Scene extends Phaser.Scene {
             this.physics.add.overlap(this.bala, this.enemy_cubo, () => {
                 this.bala.disableBody(true, true);  
                 this.bala.visible = false;
-             
-    
-    
             });
-      
+                //Predator
+            this.physics.add.overlap(this.bala, this.predator, () => {
+                this.bala.disableBody(true, true);  
+                this.bala.visible = false;
+                  gameStatePredator.vida-=1;
+                if(gameStatePredator.vida>0){
+            gameStatePredator.vidaText.setText(`x: ${gameStatePredator.vida}`);
+
+                }else{
+            gameStatePredator.vidaText.setText(`Muerto`);
+
+                }
+            //gameStatePredator.vidaText = this.add.text(12390, 1080, `x: ${gameStatePredator.vida}`, { fontSize: '30px', fill: '#000000' });
+
+            });      
     
             //=======================================================
             //Colision entre el suelo y la bala 
@@ -307,6 +461,7 @@ class LVL_1_Scene extends Phaser.Scene {
                 this.bala.visible = false;
     
             });
+
     
             //Monedas recoger
             this.capaMonedas.setTileIndexCallback(1,hitCoin,this);
@@ -331,8 +486,8 @@ class LVL_1_Scene extends Phaser.Scene {
      this.anims.create(
         {
             key:'disparar',
-            frames: this.anims.generateFrameNumbers('player_disparar',{start: 0, end: 11}),
-            frameRate: 5,
+            frames: this.anims.generateFrameNumbers('player_disparar',{start: 6, end: 11}),
+            frameRate: 3,
             repeat: -1
         });
     
@@ -340,7 +495,7 @@ class LVL_1_Scene extends Phaser.Scene {
         {
             key:'stop',
             frames: this.anims.generateFrameNumbers('player_quieto',{start: 0, end: 3}),
-            frameRate: 5,
+            frameRate: 3,
             repeat: -1
         });
         
@@ -359,6 +514,41 @@ class LVL_1_Scene extends Phaser.Scene {
             repeat: -1
             });
     //============================END ANIMACIONES JUGADOR PRINCIPAL==============================
+    //============================Start ANIMACIONES JUGADOR 2==============================
+     this.anims.create(
+        {
+            key:'disparar2',
+            frames: this.anims.generateFrameNumbers('player2_disparar',{start: 5, end: 11}),
+            frameRate: 0.5,
+            repeat: 1
+        });
+    
+        this.anims.create(
+        {
+            key:'stop2',
+            frames: this.anims.generateFrameNumbers('player2_quieto',{start: 0, end: 3}),
+            frameRate: 3,
+            repeat: -1
+        });
+        
+        this.anims.create(
+        {
+            key:'run2',
+            frames: this.anims.generateFrameNumbers('player2_correr',{start: 0, end: 6}),
+            frameRate: 10,
+            repeat: -1
+        });
+        this.anims.create(
+            {
+            key:'salta2',
+            frames: this.anims.generateFrameNumbers('player2_saltar',{start: 2, end: 3}),
+            frameRate: 1,
+            repeat: -1
+            });
+
+    //============================END ANIMACIONES JUGADOR 2==============================
+
+
     //============================START OTRAS ANIMACIONES /ENEMIGOS/OBJETOS======================
             // START ANIMACION CUBO
             this.anims.create(
@@ -376,7 +566,7 @@ class LVL_1_Scene extends Phaser.Scene {
                 repeat: -1
             });
             //END ANIMACION CUBO
-          
+            //Enemigo azul
             this.anims.create(
                 {
                     key:'pequeño',
@@ -391,13 +581,125 @@ class LVL_1_Scene extends Phaser.Scene {
                 frameRate: 1,
                 repeat: -1
             });
+            //end enemy azul
+            //Start PREDATOR 
+          this.anims.create(
+            {
+                key:'morirPredator',
+                frames: this.anims.generateFrameNumbers('predator_morir',{start: 0, end: 5}),
+                frameRate: 5,
+                repeat: 0
+            });
+          this.anims.create(
+            {
+                key:'predatorDispara',
+                frames: this.anims.generateFrameNumbers('predator_shoot',{start: 0, end: 5}),
+                frameRate: 3,
+                repeat: 0
+            });
+            this.anims.create(
+            {
+                key:'predatorQ',
+                frames: this.anims.generateFrameNumbers('predator_quieto',{start: 0, end: 0}),
+                frameRate: 1,
+                repeat: -1
+            });
+            this.anims.create(
+            {
+                key:'predator_walk',
+                frames: this.anims.generateFrameNumbers('predator_walk',{start: 0, end: 6}),
+                frameRate: 3,
+                repeat: -1
+            });            
+
+            //End Predator animation
+        this.predator.anims.play('predator_walk',true);
+
     
     //============================END OTRAS ANIMACIONES /ENEMIGOS/OBJETOS======================
-    
+    var bonus = this.mapa.addTilesetImage("bonusFly","bonusFly");
+this.capaBonusFly = this.mapa.createDynamicLayer("Bonus",bonus,0,0);
+this.capaBonusFly.setCollisionByProperty({Vuelo:true});
+this.capaBonusFly.setTileIndexCallback(157,hitBonus,this); 
+            this.physics.add.collider(player,this.capaBonusFly);
+            if(gameState.bonus == "fly")
+            {
+                setTimeout(noBonus,5000);
+            }
+
     }
      update(time,dt)
     {
-    
+        if(player.y>=2500){
+            perder_vida(this.lives);
+            this.physics.pause();
+            this.scene.restart();
+        }
+        if(player.x<=25){
+            player.x=25
+        }
+        if(player.y<=50){
+            player.y=50
+        }          
+
+       this.physics.add.collider(player, gameState.predator_laser,() => {
+        	gameState.predator_laser.destroy();
+
+       	perder_vida(this.lives);
+            this.physics.pause();
+            this.scene.restart();
+        });
+        this.physics.add.collider(player, gameState.predator_laser1,() => {
+        	gameState.predator_laser.destroy();
+
+       	perder_vida(this.lives);
+            this.physics.pause();
+            this.scene.restart();
+        });
+        this.physics.add.collider(player, gameState.predator_laser2,() => {
+        	gameState.predator_laser.destroy();
+
+       	perder_vida(this.lives);
+            this.physics.pause();
+            this.scene.restart();
+        });
+        this.physics.add.collider(player, gameState.predator_laser3,() => {
+        	gameState.predator_laser.destroy();
+
+       	perder_vida(this.lives);
+            this.physics.pause();
+            this.scene.restart();
+        });
+        this.physics.add.collider(player, gameState.predator_laser4,() => {
+        gameState.predator_laser.destroy();
+       	perder_vida(this.lives);
+            this.physics.pause();
+            this.scene.restart();
+        }); 
+        this.physics.add.collider(player, gameState.predator_laser5,() => {
+            gameState.predator_laser.destroy();
+               perder_vida(this.lives);
+                this.physics.pause();
+                this.scene.restart();
+            });              
+/*
+       if((gameState.predator_laser.x<=player.x+32 &&gameState.predator_laser.x>=player.x)&&player.y>=1525){
+        	   perder_vida(this.lives);
+            this.physics.pause();
+            this.scene.restart();
+        }*/
+ 
+
+        var inicio_fin_mapa=12673;
+        var fin_fin_mapa=12806;
+
+        this.distancia = this.spike.x-player.x;
+        if(this.distancia <= 850 && this.spike.body.onFloor())
+        {
+            this.spike.angle += 10;
+            //gameState.incredible.play();
+            
+        }
     //======================== START MOVIMIENTO CUBO=====================
         var primer_plataformaY=950;//altura en Y de la primera plataforma
         var velocidad_cubo=300;//Velocidad de bajada/subida del cubo
@@ -426,6 +728,7 @@ class LVL_1_Scene extends Phaser.Scene {
                 this.enemy_cubo.body.setVelocityY(velocidad_cubo*0);
             }
         }
+
     //======================== END MOVIMIENTO CUBO=====================
         if (cursors.left.isDown)
         {
@@ -457,78 +760,203 @@ class LVL_1_Scene extends Phaser.Scene {
         {
             socket.emit("Jugador-Moviendose-top");
     
-            player.body.setVelocityY(-400);        
+            player.body.setVelocityY(-600);        
             player.anims.play('salta',true);
     
         }
-        if(player.y>2000){
+        /*if(player.y>2000){
             perder_vida(this.lives);
             this.scene.restart();   
-        }
+        }*/
         //DISPARAR
         if (cursors.down.isDown)
         {
             if(player.flipX == true){
-                this.bala.enableBody(true, player.x, player.y, true, true).setVelocity(-2000, 50);
+                this.bala.enableBody(true, player.x-30, player.y, true, true).setVelocity(-2000, 50);
                 player.anims.play('disparar',true);
                 socket.emit("Jugador-Disparo-Izquierda");
+                alert(player.x);
+
     
     
             } else{
-                this.bala.enableBody(true, player.x, player.y, true, true).setVelocity(2000, 50);
+                this.bala.enableBody(true, player.x+30, player.y, true, true).setVelocity(2000, 50);
                 player.anims.play('disparar',true);
                 socket.emit("Jugador-Disparo-Derecha");
-    
+
     
     
             }
     
     
         }
-    }
-    ///======================================Funciones================================
-    //Se encarga de hacer la resta de las vidas al jugador, que el contador se actualice y lo muestre en pantalla
+
+        if(gameStatePredator.laser==true){
+
+    		gameState.predator_laser.x -= (gameState.speed1 * dt);
+        }
+        if(gameStatePredator.destruyeLaser==true){
+
+        	gameState.predator_laser.destroy();
+
+        }else if(gameStatePredator.nuevoLaser==true){
+             var random_altura=Math.floor((Math.random() * 3) + 1);
+             var altura_laser;
+             if(random_altura==1){
+                altura_laser=gameState.Predator.y+45;
+             }
+             if(random_altura==2){
+                altura_laser=gameState.Predator.y-75;
+             }
+             if(random_altura==3){
+                altura_laser=gameState.Predator.y;
+             }
+             if(gameStatePredator.vivo==true && player.x>=inicio_fin_mapa && player.x<=fin_fin_mapa+50){
+                gameState.predator_laser = this.physics.add.image((gameState.Predator.x+50),(altura_laser), 'predator_laser').setOrigin(0).setScale(0.1 );
+                gameState.predator_laser1 = this.physics.add.image((gameState.Predator.x+50),(altura_laser+50), 'predator_laser').setOrigin(0).setScale(0.1 );
+                gameState.predator_laser2 = this.physics.add.image((gameState.Predator.x+50),(altura_laser-150), 'predator_laser').setOrigin(0).setScale(0.1 );
+                gameState.predator_laser3 = this.physics.add.image((gameState.Predator.x+50),(altura_laser-100), 'predator_laser').setOrigin(0).setScale(0.1 );
+                gameState.predator_laser4 = this.physics.add.image((gameState.Predator.x+50),(altura_laser-220), 'predator_laser').setOrigin(0).setScale(0.1 );
+                gameState.predator_laser5 = this.physics.add.image((gameState.Predator.x+50),(altura_laser-260), 'predator_laser').setOrigin(0).setScale(0.1 );
+
+             }else{
+                gameState.predator_laser = this.physics.add.image((gameState.Predator.x-350),(altura_laser), 'predator_laser').setOrigin(0).setScale(0.1 );
+                gameState.predator_laser1 = this.physics.add.image((gameState.Predator.x+50),(altura_laser+550), 'predator_laser').setOrigin(0).setScale(0.1 );
+                gameState.predator_laser2 = this.physics.add.image((gameState.Predator.x+50),(altura_laser+550), 'predator_laser').setOrigin(0).setScale(0.1 );
+                gameState.predator_laser3 = this.physics.add.image((gameState.Predator.x+50),(altura_laser+550), 'predator_laser').setOrigin(0).setScale(0.1 );
+                gameState.predator_laser4 = this.physics.add.image((gameState.Predator.x+50),(altura_laser+550), 'predator_laser').setOrigin(0).setScale(0.1 );
+                gameState.predator_laser5 = this.physics.add.image((gameState.Predator.x+50),(altura_laser+550), 'predator_laser').setOrigin(0).setScale(0.1 );
+             }
+        gameState.predator_laser.body.allowGravity = false;
+
+       		 	gameStatePredator.nuevoLaser=false;
+
+        }
+        
+
+        //Animacion predator de caminar
+        //Cuanto quitamos las vidas al predator
+        if(gameStatePredator.vida<=0 ){
+                gameStatePredator.vivo=false;
+                this.predator.anims.play('morirPredator',true);
+                this.predator.setSize(1,1);
+                this.predator.y+=16;
+                gameStatePredator.nuevoLaser=false;
+                socket.emit("Predator-muere");
+
+
+        }
+        if(gameStatePredator.vivo==true && player.x>=inicio_fin_mapa && player.x<=fin_fin_mapa+50){
+            gameState.Predator.flipX = false;
+            gameState.predator_laser1.x +=20;
+            gameState.predator_laser1.setAngle(180);
+
+            gameState.predator_laser2.x +=20;
+            gameState.predator_laser2.setAngle(180);
+
+            gameState.predator_laser3.x +=20;
+            gameState.predator_laser3.setAngle(180);
+
+            gameState.predator_laser4.x +=20;
+            gameState.predator_laser4.setAngle(180);
+
+            gameState.predator_laser5.x +=20;
+            gameState.predator_laser5.setAngle(180);
+
+            gameState.predator_laser.x +=20;
+            gameState.predator_laser.setAngle(180);
+        }
     
-    /*
-    
-    function reproducir_music(){
-        gameState.incredible=this.sound.add("musica_fondo");
-        gameState.incredible.play()
+        //Legamos a la meta luego de matar al predator
+        if(gameStatePredator.vivo==false && (player.x>=inicio_fin_mapa && player.x<=fin_fin_mapa)){
+            socket.emit("Meta");
+            console.log(gameState.metaP2);
+        }else{
+            socket.emit("No-Meta");
+            console.log(gameState.metaP2);
+
+
+        }
+        if(gameStatePredator.vivo==false && (player.x>=inicio_fin_mapa && player.x<=fin_fin_mapa)&&gameState.metaP2==true&&(this.player2.x>=inicio_fin_mapa && this.player2.x<=fin_fin_mapa)){
+            this.scene.stop('LVL_1_Scene');
+            gameState.vida=6;
+            gameStatePredator.vida=20;   
+            gameStatePredator.vivo=true;     
+            this.scene.start('GameOver_Scene');
+        }
+        if(gameState.bonus != "fly")
+        {
+            if (cursors.up.isDown && player.body.onFloor())
+            {
+                socket.emit("Jugador-Moviendose-top");
+                player.body.setVelocityY(-400);        
+            }   
+        }
+        else
+        {
+            if(cursors.up.isDown)
+            {
+                player.body.setVelocityY(-400);
+            }
+        }
+if(((new Date().getTime()-this.start) > 5000) && gameState.bonus == "fly")
+        {
+            noBonus();
+        }
+
     }
-    */
-
-
-
-
+ 
 }
 
+    ///======================================Funciones================================
 //Reproduce la musica de fondo
 function reproducir_music(){
     gameState.incredible=this.sound.add("musica_fondo");
     gameState.incredible.play()
 }
-
+//Recoje las monedas 
 function hitCoin(sprite,tile)
     {
-        capaMonedas.removeTileAt(tile.x,tile.y);
+        this.capaMonedas.removeTileAt(tile.x,tile.y);
         gameState.score+= 20;
         gameState.scoreText.setText(`Score: ${gameState.score}`);
         return false;
     }
-    function perder_vida(lives){
-        gameState.vida-=1;
-        gameState.score=0;
-        gameState.scoreText.setText(`Score: ${gameState.score}`);
 
-        gameState.vidaText.setText(`Vida: ${gameState.vida}`);
-        var array_live=lives.getChildren();
-        var invader = Phaser.Utils.Array.RemoveAt(array_live,array_live.length-1);
+//Se encarga de hacer la resta de las vidas al jugador, que el contador se actualice y lo muestre en pantalla   
+function perder_vida(lives){
+    gameState.vida-=1;
+    gameState.score=0;
+    gameState.scoreText.setText(`Score: ${gameState.score}`);
+    gameStatePredator.vida=20;   
+    gameState.vidaText.setText(`Vida: ${gameState.vida}`);
+    var array_live=lives.getChildren();
+    var invader = Phaser.Utils.Array.RemoveAt(array_live,array_live.length-1);
     if (invader)
     {
         gameState.incredible.stop();
         invader.destroy();
         socket.emit("pierde-vida");
     }
-    
-    
 }
+function atacar(){
+    gameState.Predator.flipX = true;
+    gameStatePredator.laser=true;
+    gameState.Predator.anims.play('predatorDispara',true);
+}
+
+
+function hitBonus(sprite,tile)
+{
+    this.capaBonusFly.removeTileAt(tile.x,tile.y);
+    gameState.bonus = "fly";
+    this.start = new Date().getTime();
+    return false;
+}
+function noBonus()
+{
+    gameState.bonus = "";
+    alert("PARADO");
+}
+
+

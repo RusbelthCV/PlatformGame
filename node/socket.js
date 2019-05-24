@@ -38,7 +38,20 @@ io.on('connection', (socket) => {
     socket.on('Jugador-Disparo-Derecha', () =>{
         console.log('Jugador ha disparado  a la Derecha');
         socket.broadcast.emit('Jugador-shoot-right');
-    });    
+    });  
+
+    socket.on('Predator-muere', () =>{
+        //console.log('Predator-muere');
+        socket.broadcast.emit('PredatorMuere');
+    });   
+    socket.on('Meta', () =>{
+        console.log('Meta');
+        socket.broadcast.emit('MetaP2');
+    });      
+      socket.on('No-Meta', () =>{
+        console.log('no-Meta');
+        socket.broadcast.emit('no-MetaP2');
+    });   
 });
 
 var port =2525;
