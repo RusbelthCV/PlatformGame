@@ -16,21 +16,22 @@
       function loguearse()
       {
           require_once 'conexion.php';
-          $flagInsercion = false;
-          $consulta = "SELECT count(*) FROM usuario WHERE Email LIKE '$this->correo' AND Password LIKE '$this->contra'";
+          //$flagInsercion = false;
+          $consulta = "SELECT * FROM usuario WHERE Email LIKE '$this->correo' AND Password LIKE '$this->contra'";
           $ejecutar = $pdo->prepare($consulta);
           $ejecutar->execute();
           //Iniciamos la comprobación de existencias
-          $numeroCoincidencias = $ejecutar->fetchColumn();
-          if($numeroCoincidencias == 1)
+          $numeroCoincidencias = $ejecutar->fetch();
+          if($numeroCoincidencias["Email"])
           {
-              $flagInsercion = true;
+              $existencias = $numeroCoincidencias["Email"];
+              
           }
           else
           {
-              $flagInsercion = false;
+              $existencias = -1;
           }
-          return $flagInsercion;
+          return $existencias;
       }
 
       function getEmail()

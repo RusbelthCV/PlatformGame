@@ -2,7 +2,6 @@ class LVL_1_Scene extends Phaser.Scene {
 	constructor(){
 		super({ key: 'LVL_1_Scene' });
     }
-
      preload()
     {
         //Cargamos
@@ -21,7 +20,6 @@ class LVL_1_Scene extends Phaser.Scene {
         this.load.spritesheet('player_saltar','assets/Player/SpriteAlienGreen/salta.png',{frameWidth: 266,frameHeight:449.3});
         this.load.spritesheet('player_quieto','assets/Player/SpriteAlienGreen/quieto.png',{frameWidth: 235   ,frameHeight:435.33});
         //player2
-        //this.load.spritesheet('player2','assets/Player/SpriteSheet blue/player.png',{frameWidth: 500,frameHeight:714});
         this.load.spritesheet('player2_correr','assets/Player/SpriteAlienBlue/run.png',{frameWidth: 218,frameHeight:433});
         this.load.spritesheet('player2_disparar','assets/Player/SpriteAlienBlue/Dispara.png',{frameWidth: 486,frameHeight:438.6363});
         this.load.spritesheet('player2_saltar','assets/Player/SpriteAlienBlue/salta.png',{frameWidth: 266,frameHeight:449.3});
@@ -617,15 +615,15 @@ class LVL_1_Scene extends Phaser.Scene {
 
     
     //============================END OTRAS ANIMACIONES /ENEMIGOS/OBJETOS======================
-    var bonus = this.mapa.addTilesetImage("bonusFly","bonusFly");
-this.capaBonusFly = this.mapa.createDynamicLayer("Bonus",bonus,0,0);
-this.capaBonusFly.setCollisionByProperty({Vuelo:true});
-this.capaBonusFly.setTileIndexCallback(157,hitBonus,this); 
-            this.physics.add.collider(player,this.capaBonusFly);
-            if(gameState.bonus == "fly")
-            {
-                setTimeout(noBonus,5000);
-            }
+        var bonus = this.mapa.addTilesetImage("bonusFly","bonusFly");
+        this.capaBonusFly = this.mapa.createDynamicLayer("Bonus",bonus,0,0);
+        this.capaBonusFly.setCollisionByProperty({Vuelo:true});
+        this.capaBonusFly.setTileIndexCallback(157,hitBonus,this); 
+        this.physics.add.collider(player,this.capaBonusFly);
+        gameState.secondsText = this.add.text(520,16,"Bonus: None",{fontSize: "16px",fill: "#00000"});
+        gameState.secondsText.setScrollFactor(0);
+        seconds = setInterval(countSeconds,1000);
+        
 
     }
      update(time,dt)
@@ -762,7 +760,6 @@ this.capaBonusFly.setTileIndexCallback(157,hitBonus,this);
     
             player.body.setVelocityY(-600);        
             player.anims.play('salta',true);
-    
         }
         /*if(player.y>2000){
             perder_vida(this.lives);
@@ -775,7 +772,6 @@ this.capaBonusFly.setTileIndexCallback(157,hitBonus,this);
                 this.bala.enableBody(true, player.x-30, player.y, true, true).setVelocity(-2000, 50);
                 player.anims.play('disparar',true);
                 socket.emit("Jugador-Disparo-Izquierda");
-                alert(player.x);
 
     
     
@@ -870,10 +866,8 @@ this.capaBonusFly.setTileIndexCallback(157,hitBonus,this);
         //Legamos a la meta luego de matar al predator
         if(gameStatePredator.vivo==false && (player.x>=inicio_fin_mapa && player.x<=fin_fin_mapa)){
             socket.emit("Meta");
-            console.log(gameState.metaP2);
         }else{
             socket.emit("No-Meta");
-            console.log(gameState.metaP2);
 
 
         }
@@ -899,9 +893,10 @@ this.capaBonusFly.setTileIndexCallback(157,hitBonus,this);
                 player.body.setVelocityY(-400);
             }
         }
-if(((new Date().getTime()-this.start) > 5000) && gameState.bonus == "fly")
+        if(((new Date().getTime()-this.start) > 5000) && gameState.bonus == "fly")
         {
             noBonus();
+            clearInterval(seconds);
         }
 
     }
@@ -956,7 +951,15 @@ function hitBonus(sprite,tile)
 function noBonus()
 {
     gameState.bonus = "";
-    alert("PARADO");
+    clearInterval(countSeconds);
+    gameState.segundos = 5;
+    gameState.secondsText.setText("Bonus: None");
 }
-
-
+function countSeconds()
+{
+    if(gameState.bonus == "fly")
+    {
+        gameState.segundos--;
+        gameState.secondsText.setText("Bonus: Fly "+gameState.segundos);
+    }
+}

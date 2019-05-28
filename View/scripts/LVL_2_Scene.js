@@ -35,7 +35,7 @@ class LVL_2_Scene extends Phaser.Scene {
 
         
         //enemigo azul 
-        this.load.spritesheet('dragon','assets/enemigos/enemigo1/dragon.png',{frameWidth: 587,frameHeight:691});
+        this.load.spritesheet('dino','assets/enemigos/T-rex/walk.png',{frameWidth: 380,frameHeight:420});
         /*
         //Enemigo spike
         this.load.image("enemigo","assets/Free Platform Game Assets/Platform Game Assets/Enemies/png/128x128/Saw.png");
@@ -149,15 +149,28 @@ class LVL_2_Scene extends Phaser.Scene {
 
     //======================JUGADOR PRINCIPAL=======================
      //JUGADOR1
-        player = this.physics.add.sprite(50, 900, 'player');//12200
+        player = this.physics.add.sprite(4000, 1500, 'player');//12200
         player.setScale(0.25);
          //JUGADOR 2
         this.player2 = this.physics.add.sprite(50, 900, 'player2_quieto');
+
+
+
+
         this.player2.setScale(0.25);
         //CREAMOS LA BALA 
         this.bala = this.physics.add.sprite(player.x, player.y, 'bullet');
         this.bala.disableBody(true, true);   
   //=================END JUGADOR PRINCIPAL=======================
+
+  //DINO
+        this.dino = this.physics.add.sprite(4500, 1500, 'dino');
+        this.dino.flipX=true;
+        gameStateDino.dino=this.dino;
+        gameStateDino.MensajeText = this.add.text(3240, 1350, `Vida del T-rex`, { fontSize: '30px', fill: '#000000' });
+        gameStateDino.vidaText = this.add.text(3400, 1380, `x: ${gameStateDino.vida}`, { fontSize: '30px', fill: '#000000' });
+
+  //END DINO
      //================================ANIMACIONES JUGADOR PRINCIPAL==============================
     
      this.anims.create(
@@ -205,6 +218,8 @@ class LVL_2_Scene extends Phaser.Scene {
         this.capaMapa.setCollisionByProperty({Suelo:true});
         capaLava.setCollisionByProperty({muerte:true});
         this.physics.add.collider(player, this.capaMapa);
+        this.physics.add.collider(this.dino, this.capaMapa);
+
         this.physics.add.collider(this.player2, this.capaMapa);
 
 
@@ -219,8 +234,27 @@ class LVL_2_Scene extends Phaser.Scene {
         this.physics.add.collider(this.bala, this.capaMapa, () => {
             this.bala.disableBody(true, true);  
             this.bala.visible = false;
-
         }); 
+        //Colision entre bala y Trex
+        this.physics.add.overlap(this.bala,gameStateDino.dino, () => {
+            this.bala.disableBody(true, true);  
+            this.bala.visible = false;
+            gameStateDino.vida-=1;
+            if(gameStateDino.vida>0){
+              gameStateDino.vidaText.setText(`x: ${gameStateDino.vida}`);
+
+            }else{
+              gameStateDino.vidaText.setText(`Muerto`);
+
+            }
+        }); 
+        this.physics.add.collider(player,gameStateDino.dino,() => {
+            gameStateDino.vida=35;
+            perder_vida(this.lives);
+            this.physics.pause();
+            this.scene.restart();
+        });
+
         //Monedas recoger
         this.capaMonedas.setTileIndexCallback(160,hitCoin,this);
         this.physics.add.collider(player,this.capaMonedas);        
@@ -247,11 +281,11 @@ class LVL_2_Scene extends Phaser.Scene {
             gameState.vidaText.setScrollFactor(0);
             this.livesPredator = this.add.group();
             this.livesPredator.create(12370, 1100, 'heartP');
-            gameStatePredator.MensajeText = this.add.text(12356, 1050, `Vida del Predator`, { fontSize: '30px', fill: '#000000' });
-            gameStatePredator.vidaText = this.add.text(12390, 1080, `x: ${gameStatePredator.vida}`, { fontSize: '30px', fill: '#000000' });   
              //CONTADOR SCORE
             gameState.scoreText = this.add.text(200,16,`Score: ${gameState.score}`,{fontSize:"20px",fill:"#000000"});
             gameState.scoreText.setScrollFactor(0);   
+            this.livesDino = this.add.group();
+            this.livesDino.create(3370, 1395, 'heartP');
         }           
         //==================END VIDA=================================
         gameState.espacio=0;
@@ -281,6 +315,66 @@ class LVL_2_Scene extends Phaser.Scene {
                 Crearpuente.destroy();
             }
         }
+gameStateDino.velocidad=false;
+
+                //Start dino
+
+        const dinoloop = this.tweens.add({
+            targets:  gameStateDino.dino,
+            /*x: 3200,
+            ease: 'Linear',
+            duration: 3800,
+            repeat: -1,
+            yoyo: true,*/
+               props: {
+            x: { value: 3200, duration: 5000, ease: 'Linear', yoyo: true, repeat: -1 },
+            y: { value: 1400, duration: 1000, ease: 'Linear', yoyo: true, delay: 1000 ,repeat: -1}
+        },
+
+            //onRepeat: growSnowman
+            onRepeat : function() {
+                if(gameStateDino.dino.x>=4000){
+                    dinoloop.stop();
+                    for(var i=0;i<3;i++){
+                        setTimeout(function(){
+                        
+                        alert("disparo");
+                        },1000);}
+                //dinoloop.play();
+
+
+                }
+                gameStateDino.dino.flipX=true;
+                gameStateDino.velocidad=true;
+               // dinoloop.play();
+         //gameStateDino.dino.x-=500;
+
+               /* gameStatePredator.destruyeLaser=false;
+                gameStatePredator.nuevoLaser=true;
+
+
+                atacar();*/
+
+
+            } ,
+            onYoyo : function() {
+                gameStateDino.velocidad=false;
+
+                 gameStateDino.dino.flipX=false;
+      /*
+                gameState.Predator.flipX=false;
+                //atacar();
+                gameState.Predator.anims.play('predator_walk',true);
+                gameStatePredator.destruyeLaser=true;
+                gameStatePredator.nuevoLaser=false;
+
+
+
+      */}      
+
+        });
+
+        //End Predator
     
 
 
@@ -289,7 +383,10 @@ class LVL_2_Scene extends Phaser.Scene {
         if((((player.x>=1296 && player.x<=1400)&&player.y>=1850)||((this.player2.x>=1296 && this.player2.x<=1400)&&this.player2.y>=1850))&&(((player.x>=1296 && player.x<=1400)&&player.y<=1200)||((this.player2.x>=1296 && this.player2.x<=1400)&&this.player2.y<=1200))){
             gameState.puente=true;
         }
-
+        if(gameStateDino.velocidad==true){
+            console.log("corre");
+            gameStateDino.x+=150;
+        }
 
         if(player.x<=25){
             player.x=25
@@ -328,8 +425,7 @@ class LVL_2_Scene extends Phaser.Scene {
                 this.bala.enableBody(true, player.x-30, player.y, true, true).setVelocity(-2000, 50);
                 player.anims.play('disparar',true);
                 socket.emit("Jugador-Disparo-Izquierda");
-                alert("playerX"+player.x);
-                alert("playerY"+player.y);
+         
 
        
             } else{

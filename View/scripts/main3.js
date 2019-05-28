@@ -16,10 +16,10 @@ var config =
         default: 'arcade',
         arcade:{
             gravity:{y: 500},
-            debug:false
+            debug:true
         }
     },
-    scene: [LVL_2_Scene,LVL_1_Scene,GameOver_Scene, ]
+    scene: [LVL_2_Scene,LVL_1_Scene,GameOver_Scene]
 };
 var game = new Phaser.Game(config);
 
@@ -37,7 +37,11 @@ const gameState = {
 };
     
 const gameStatePredator = {vida:20,vivo:true,laser:false,nuevoLaser:false,destruyeLaser:false}
-
+const gameStateDino={
+    vida:35,
+    vivo:true,
+    fuego:false
+}
 var bullets;
 var bulletTime=0;
 var coins;
