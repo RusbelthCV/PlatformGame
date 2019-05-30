@@ -4,6 +4,8 @@ var map;
 var layer;
 var player;
 var sound;
+var seconds;
+
 var tilset;
 
 var config = 
@@ -40,7 +42,9 @@ const gameStatePredator = {vida:20,vivo:true,laser:false,nuevoLaser:false,destru
 const gameStateDino={
     vida:35,
     vivo:true,
-    fuego:false
+    Fuego:false,
+    disparo:0,
+    nuevoFuego:false,destruyeFuego:false
 }
 var bullets;
 var bulletTime=0;

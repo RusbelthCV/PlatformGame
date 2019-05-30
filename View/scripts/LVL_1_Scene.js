@@ -876,7 +876,7 @@ class LVL_1_Scene extends Phaser.Scene {
             gameState.vida=6;
             gameStatePredator.vida=20;   
             gameStatePredator.vivo=true;     
-            this.scene.start('GameOver_Scene');
+            this.scene.start('LVL_2_Scene');
         }
         if(gameState.bonus != "fly")
         {

@@ -31,11 +31,10 @@ class LVL_2_Scene extends Phaser.Scene {
         this.load.image('bullet', 'assets/purple_ball.png',{frameWidth: 500,frameHeight:714});
         //Puente
         this.load.spritesheet('puente', 'assets/puente.png',{frameWidth: 116,frameHeight:28});
-
-
-        
         //enemigo azul 
         this.load.spritesheet('dino','assets/enemigos/T-rex/walk.png',{frameWidth: 380,frameHeight:420});
+        this.load.spritesheet('dino_salta','assets/enemigos/T-rex/saltar.png',{frameWidth: 460,frameHeight:472});
+        this.load.spritesheet('fireball','assets/enemigos/T-rex/fireball.png',{frameWidth: 460,frameHeight:472});
         /*
         //Enemigo spike
         this.load.image("enemigo","assets/Free Platform Game Assets/Platform Game Assets/Enemies/png/128x128/Saw.png");
@@ -52,11 +51,11 @@ class LVL_2_Scene extends Phaser.Scene {
 */
         //Vida
         this.load.spritesheet('heartP', 'assets/1vida.png',{frameWidth: 32,frameHeight:32});
-        
      }
      create(){
 
 
+    gameState.speed1 = Phaser.Math.GetSpeed(1500, 3);
 
 
      	   //Iniciar musica 
@@ -143,7 +142,8 @@ class LVL_2_Scene extends Phaser.Scene {
         cursors = this.input.keyboard.createCursorKeys();
      	this.capaMapa = this.mapa.createDynamicLayer("groundLayer",tileSetMapa,0,0);
         this.capaElementos =this.mapa.createDynamicLayer("Botones",tileSetElementos,0,0);
-        var capaLava = this.mapa.createDynamicLayer("Lava",tileSetElementos,0,0);
+         this.capaLava = this.mapa.createDynamicLayer("Lava",tileSetElementos,0,0);
+        
         this.capaMonedas = this.mapa.createDynamicLayer("coinLayer",tileSetMonedas,0,0);
     //======================END AÑADIR ELEMENTOS=====================
 
@@ -153,23 +153,25 @@ class LVL_2_Scene extends Phaser.Scene {
         player.setScale(0.25);
          //JUGADOR 2
         this.player2 = this.physics.add.sprite(50, 900, 'player2_quieto');
-
-
-
-
         this.player2.setScale(0.25);
         //CREAMOS LA BALA 
         this.bala = this.physics.add.sprite(player.x, player.y, 'bullet');
         this.bala.disableBody(true, true);   
   //=================END JUGADOR PRINCIPAL=======================
-
   //DINO
-        this.dino = this.physics.add.sprite(4500, 1500, 'dino');
+        this.dino = this.physics.add.sprite(4500, 1500, 'dino_salta');
         this.dino.flipX=true;
+        gameStateDino.fuego = this.physics.add.sprite(3500, 2500, 'fireball').setScale(.3).setOrigin(0);
+        gameStateDino.fuego1 = this.physics.add.sprite(3500, 2500, 'fireball').setScale(.3).setOrigin(0);
+        gameStateDino.fuego2 = this.physics.add.sprite(3500, 2500, 'fireball').setScale(.3).setOrigin(0);
+
+
+
+        //gameStateDino.fuego.setSize(400,400);
         gameStateDino.dino=this.dino;
         gameStateDino.MensajeText = this.add.text(3240, 1350, `Vida del T-rex`, { fontSize: '30px', fill: '#000000' });
         gameStateDino.vidaText = this.add.text(3400, 1380, `x: ${gameStateDino.vida}`, { fontSize: '30px', fill: '#000000' });
-
+         gameStateDino.dino.setSize(400,400);
   //END DINO
      //================================ANIMACIONES JUGADOR PRINCIPAL==============================
     
@@ -204,7 +206,14 @@ class LVL_2_Scene extends Phaser.Scene {
             repeat: -1
             });
     //============================END ANIMACIONES JUGADOR PRINCIPAL==============================
-
+    //Animacion DinoSaurio 
+        this.anims.create(
+            {
+            key:'dino_salta',
+            frames: this.anims.generateFrameNumbers('dino_salta',{start: 0, end: 11}),
+            frameRate: 5,
+            repeat: -1
+            });
     //===========START CAMARA========================
         this.cameras.main.setBounds(0, 0, this.mapa.widthInPixels, this.mapa.heightInPixels);
         this.cameras.main.startFollow(player);
@@ -216,7 +225,10 @@ class LVL_2_Scene extends Phaser.Scene {
      
         //COLISIONES ENTRE MAPA Y JUGADORES
         this.capaMapa.setCollisionByProperty({Suelo:true});
-        capaLava.setCollisionByProperty({muerte:true});
+        this.capaLava.setCollisionByProperty({muerte:true});
+         
+        this.physics.add.collider(gameStateDino.fuego, this.capaMapa);
+
         this.physics.add.collider(player, this.capaMapa);
         this.physics.add.collider(this.dino, this.capaMapa);
 
@@ -224,7 +236,7 @@ class LVL_2_Scene extends Phaser.Scene {
 
 
       	//Lava - Jugador
-        this.physics.add.collider(player,capaLava,()=>
+        this.physics.add.collider(player,this.capaLava,()=>
             {
                 perder_vida(this.lives);
                 this.physics.pause();
@@ -254,6 +266,8 @@ class LVL_2_Scene extends Phaser.Scene {
             this.physics.pause();
             this.scene.restart();
         });
+
+      
 
         //Monedas recoger
         this.capaMonedas.setTileIndexCallback(160,hitCoin,this);
@@ -315,78 +329,112 @@ class LVL_2_Scene extends Phaser.Scene {
                 Crearpuente.destroy();
             }
         }
-gameStateDino.velocidad=false;
 
+            gameStateDino.dino.anims.play('dino_salta',true);
                 //Start dino
 
-        const dinoloop = this.tweens.add({
+         const dinoloop = this.tweens.add({
             targets:  gameStateDino.dino,
-            /*x: 3200,
-            ease: 'Linear',
-            duration: 3800,
-            repeat: -1,
-            yoyo: true,*/
+           
                props: {
             x: { value: 3200, duration: 5000, ease: 'Linear', yoyo: true, repeat: -1 },
             y: { value: 1400, duration: 1000, ease: 'Linear', yoyo: true, delay: 1000 ,repeat: -1}
         },
 
-            //onRepeat: growSnowman
             onRepeat : function() {
-                if(gameStateDino.dino.x>=4000){
-                    dinoloop.stop();
+                if(gameStateDino.dino.x>=4500){
+                    //dinoloop.stop();
+                            gameStateDino.dino.flipX=true;
+
+                           // dinoloop.play();
                     for(var i=0;i<3;i++){
                         setTimeout(function(){
-                        
-                        alert("disparo");
-                        },1000);}
-                //dinoloop.play();
+                            gameStateDino.disparo++;
+                            gameStateDino.destruyeFuego=false;
+                            gameStateDino.nuevoFuego=true;
+                            
 
+                            gameStateDino.Fuego=true;
+                            atacarDino();
+                                /*if(gameStateDino.disparo>=3){
+                                    console.log("hazme caso2");
+                                    gameStateDino.disparo=0;
+                            
+                            
+
+                                }*/
+                        },1000);
+
+                    
+                    }
 
                 }
                 gameStateDino.dino.flipX=true;
-                gameStateDino.velocidad=true;
-               // dinoloop.play();
-         //gameStateDino.dino.x-=500;
-
-               /* gameStatePredator.destruyeLaser=false;
-                gameStatePredator.nuevoLaser=true;
-
-
-                atacar();*/
-
-
             } ,
             onYoyo : function() {
-                gameStateDino.velocidad=false;
+            if(gameStateDino.dino.x>=3086 &&gameStateDino.dino.x<=3760){
 
-                 gameStateDino.dino.flipX=false;
-      /*
-                gameState.Predator.flipX=false;
-                //atacar();
-                gameState.Predator.anims.play('predator_walk',true);
-                gameStatePredator.destruyeLaser=true;
-                gameStatePredator.nuevoLaser=false;
+                gameStateDino.dino.flipX=false;
+                gameStateDino.destruyeFuego=true;
+                gameStateDino.nuevoFuego=false;
+            }
 
 
-
-      */}      
+      }      
 
         });
-
         //End Predator
-    
 
 
  }
      update(time,dt){
+      this.physics.add.collider(player,gameStateDino.fuego,() => {
+            gameStateDino.fuego.destroy();
+            gameStateDino.vida=35;
+            this.physics.pause();
+            perder_vida(this.lives);
+            this.scene.restart();
+
+        });
+        this.physics.add.collider(player,gameStateDino.fuego1,() => {
+            gameStateDino.fuego1.destroy();
+            gameStateDino.vida=35;
+            this.physics.pause();
+            perder_vida(this.lives);
+            this.scene.restart();
+
+        });
+        this.physics.add.collider(player,gameStateDino.fuego2,() => {
+            gameStateDino.fuego2.destroy();
+            gameStateDino.vida=35;
+            this.physics.pause();
+            perder_vida(this.lives);
+            this.scene.restart();
+
+        });
+        this.physics.add.collider(player,gameStateDino.fuegoCaida,() => {
+            gameStateDino.fuegoCaida.destroy();
+            gameStateDino.vida=35;
+            this.physics.pause();
+            perder_vida(this.lives);
+            this.scene.restart();
+
+        });
+
+
+
+
+
+
+
+
+
+
+        gameState.juego=this;
         if((((player.x>=1296 && player.x<=1400)&&player.y>=1850)||((this.player2.x>=1296 && this.player2.x<=1400)&&this.player2.y>=1850))&&(((player.x>=1296 && player.x<=1400)&&player.y<=1200)||((this.player2.x>=1296 && this.player2.x<=1400)&&this.player2.y<=1200))){
             gameState.puente=true;
         }
-        if(gameStateDino.velocidad==true){
-            console.log("corre");
-            gameStateDino.x+=150;
-        }
+    
 
         if(player.x<=25){
             player.x=25
@@ -411,7 +459,7 @@ gameStateDino.velocidad=false;
     
         }
         // jump 
-        if (cursors.up.isDown /*&& player.body.onFloor()*/)
+        if (cursors.up.isDown && player.body.onFloor())
         {
             socket.emit("Jugador-Moviendose-top");
     
@@ -425,9 +473,6 @@ gameStateDino.velocidad=false;
                 this.bala.enableBody(true, player.x-30, player.y, true, true).setVelocity(-2000, 50);
                 player.anims.play('disparar',true);
                 socket.emit("Jugador-Disparo-Izquierda");
-         
-
-       
             } else{
                 this.bala.enableBody(true, player.x+30, player.y, true, true).setVelocity(2000, 50);
                 player.anims.play('disparar',true);
@@ -440,7 +485,60 @@ gameStateDino.velocidad=false;
     
     
         }
+        if(gameStateDino.vida<=5){
+            gameStateDino.dino.setScale(1.3);
+        }
+        if(gameStateDino.dino.body.onFloor()){
+             var random=(Math.floor((Math.random() * 3) + 1));
+            console.log(random);
+
+             var altura=Math.random() * (4500 - 2500) + 2500;
+             var altura2=Math.random() * (800 - 200) + 200;
+             var altura3=Math.random() * (800 - 200) + 200;
+             altura=altura+altura3-altura2;
+             if(random==2){
+                 gameStateDino.fuegoCaida  = this.physics.add.sprite((altura),1000, 'fireball').setOrigin(0).setScale(0.3);
+             }
+
+        }
+
+        if(gameStateDino.Fuego==true){
+            gameStateDino.fuego.x -= (gameState.speed1 * dt);
+            gameStateDino.fuego2.x -= (gameState.speed1 * dt);
+            gameStateDino.fuego1.x -= (gameState.speed1 * dt);
+
+
+        }
+        if(gameStateDino.destruyeFuego==true){
+
+            gameStateDino.fuego.destroy();
+            gameStateDino.fuego2.destroy();
+            gameStateDino.fuego1.destroy();
+
+
+
+        }else if(gameStateDino.nuevoFuego==true){
+           
+            gameStateDino.fuego  = this.physics.add.sprite((gameStateDino.dino.x),Math.random() * (1800 - 1350) + 1350, 'fireball').setOrigin(0).setScale(0.3);
+            setTimeout(function(){
+            gameStateDino.fuego1  = gameState.juego.physics.add.sprite((gameStateDino.dino.x),Math.random() * (1800 - 1350) + 1350, 'fireball').setOrigin(0).setScale(0.3);
+            gameStateDino.fuego1.body.allowGravity = false; 
+
+            },1500,this);
+            setTimeout(function(){
+            gameStateDino.fuego2  = gameState.juego.physics.add.sprite((gameStateDino.dino.x),Math.random() * (1800 - 1350) + 1350, 'fireball').setOrigin(0).setScale(0.3);
+            gameStateDino.fuego2.body.allowGravity = false;
+            },2500,this);
+            gameStateDino.fuego.body.allowGravity = false;
+            gameStateDino.nuevoFuego=false;
+
+        }
+
      }
 
 
 }
+function atacarDino(){
+    gameStateDino.Fuego=true;
+}
+

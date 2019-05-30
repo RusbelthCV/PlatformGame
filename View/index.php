@@ -19,8 +19,8 @@
 
 				<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.dev.js"></script>
     <script>
-        const socket = io('http://192.168.12.199:2525'); //Clases
-        //const socket = io('http://localhost:2525'); //Casa
+        //const socket = io('http://192.168.12.199:2525'); //Clases
+        const socket = io('http://localhost:2525'); //Casa
 
     </script>
 		</head>
