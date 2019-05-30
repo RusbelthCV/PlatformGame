@@ -10,23 +10,23 @@
 		    <title>Juego</title>
 		    <script src="scripts/phaser.js"></script>
 		    <!--<script type="text/javascript" src="scripts/principal.js"></script>-->
-		    <script type="text/javascript" src="scripts/GameOver_Scene.js"></script>
+		    <script type="text/javascript" src="scripts/GameOver_Scene1.js"></script>
+	        <script type="text/javascript" src="scripts/GameOver_Scene2.js"></script>
 		    <script type="text/javascript" src="scripts/LVL_2_Scene.js"></script>
-
 		    <script type="text/javascript" src="scripts/LVL_1_Scene.js"></script>
-
 		    <script type="text/javascript" src="scripts/main3.js"></script>
+			<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.dev.js"></script>
+	<script>
 
-				<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.dev.js"></script>
-    <script>
-        //const socket = io('http://192.168.12.199:2525'); //Clases
-        const socket = io('http://localhost:2525'); //Casa
+        const socket = io('http://localhost:8000'); //Casa
+
 
     </script>
 		</head>
 		<body>
 			<div id="bloque"></div>
 			<a href="../" class="form-submit submit backB">Atrás</a>
+
 		</body>
 		</html><?php	    
 	  }

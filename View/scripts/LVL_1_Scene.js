@@ -62,8 +62,8 @@ class LVL_1_Scene extends Phaser.Scene {
         });
         //Detecta si el compañero a perdido TODAS   las vida
         socket.on('JugadorMuere',()=>{
-            this.add.text(180, 250, 'Game Over', { fontSize: '15px', fill: '#000000' });
-            this.add.text(152, 270, 'Click to Restart', { fontSize: '15px', fill: '#000000' });    
+            this.scene.stop('LVL_1_Scene');
+            this.scene.start('GameOver_Scene1');
         }); 
         socket.on('jugadorStop',()=>{
             this.player2.body.setVelocityX(0);
@@ -94,7 +94,7 @@ class LVL_1_Scene extends Phaser.Scene {
     
         //Detecta si el compañero ha saltado
         socket.on('jugador-mov-top',()=>{
-            this.player2.body.setVelocityY(-600);        
+            this.player2.body.setVelocityY(-380);        
             this.player2.anims.play('salta2',true);
             console.log("Este jugador abusa del fly");
         });
@@ -158,9 +158,7 @@ class LVL_1_Scene extends Phaser.Scene {
         var capaAgua = this.mapa.createDynamicLayer("agua",tileSetElementos,0,0);
         this.capaMonedas = this.mapa.createDynamicLayer("coinsLayer",tileSetMonedas,0,0);
         var capaTrampas =this.mapa.createDynamicLayer("trampas",tileSetMapa,0,0);
-        //capaMonedas.setScale(0.7);
-        //capaMonedas.y+=100;
-        //capaMonedas.x+=100;
+     
     
     
     
@@ -171,11 +169,11 @@ class LVL_1_Scene extends Phaser.Scene {
     //======================JUGADOR PRINCIPAL=======================
     
         //JUGADOR1
-        player = this.physics.add.sprite(200, 900, 'player');//12200
+        player = this.physics.add.sprite(200, 980, 'player');//12200
         player.setScale(0.25);
     
         //JUGADOR 2
-        this.player2 = this.physics.add.sprite(10200, 900, 'player2_quieto');
+        this.player2 = this.physics.add.sprite(200, 980, 'player2_quieto');
         this.player2.setScale(0.25);
     
         //CREAMOS LA BALA 
@@ -332,7 +330,7 @@ class LVL_1_Scene extends Phaser.Scene {
         if(gameState.vida==0){
 
     		this.scene.stop('LVL_1_Scene');
-			this.scene.start('GameOver_Scene');
+			this.scene.start('GameOver_Scene1');
     
             socket.emit("Jugador-Muere");
          
@@ -756,8 +754,7 @@ class LVL_1_Scene extends Phaser.Scene {
         // jump 
         if (cursors.up.isDown && player.body.onFloor())
         {
-            socket.emit("Jugador-Moviendose-top");
-    
+            socket.emit("Jugador-Moviendose-top");    
             player.body.setVelocityY(-600);        
             player.anims.play('salta',true);
         }
@@ -890,6 +887,8 @@ class LVL_1_Scene extends Phaser.Scene {
         {
             if(cursors.up.isDown)
             {
+                socket.emit("Jugador-Moviendose-top");
+                
                 player.body.setVelocityY(-400);
             }
         }
@@ -921,7 +920,9 @@ function hitCoin(sprite,tile)
 //Se encarga de hacer la resta de las vidas al jugador, que el contador se actualice y lo muestre en pantalla   
 function perder_vida(lives){
     gameState.vida-=1;
-    gameState.score=0;
+            gameStateDino.vida=35;
+            gameStateDino.vivo=true;
+
     gameState.scoreText.setText(`Score: ${gameState.score}`);
     gameStatePredator.vida=20;   
     gameState.vidaText.setText(`Vida: ${gameState.vida}`);

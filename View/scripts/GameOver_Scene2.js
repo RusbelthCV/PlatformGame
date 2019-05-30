@@ -1,6 +1,6 @@
-class GameOver_Scene extends Phaser.Scene {
+class GameOver_Scene2 extends Phaser.Scene {
 	constructor() {
-		super({ key: 'GameOver_Scene' })
+		super({ key: 'GameOver_Scene2' })
 	}
 
 	preload()
@@ -17,10 +17,8 @@ class GameOver_Scene extends Phaser.Scene {
 
 
 
-		this.input.on('pointerdown', () => {
-			this.scene.stop('GameOver_Scene');
+			this.scene.stop('GameOver_Scene2');
 			this.scene.start('LVL_2_Scene');
-		})
 	}
 	update(time,dt)
 	{

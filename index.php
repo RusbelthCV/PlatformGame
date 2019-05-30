@@ -24,6 +24,15 @@
             include_once 'Controller/Controller-Registro.php';
             break;
         }
-        
+        case 'lobby':
+        {
+            include_once 'Controller/lobbyController.php';
+            break;
+        }
+        case 'game':
+        {
+            include_once 'Controller/gameController.php';
+            break;
+        }
     }
 ?>
