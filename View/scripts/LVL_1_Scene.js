@@ -479,13 +479,7 @@ class LVL_1_Scene extends Phaser.Scene {
     //============END CAMARA========================
     //================================ANIMACIONES JUGADOR PRINCIPAL==============================
     
-     this.anims.create(
-        {
-            key:'disparar',
-            frames: this.anims.generateFrameNumbers('player_disparar',{start: 6, end: 11}),
-            frameRate: 3,
-            repeat: -1
-        });
+
     
         this.anims.create(
         {
@@ -511,13 +505,7 @@ class LVL_1_Scene extends Phaser.Scene {
             });
     //============================END ANIMACIONES JUGADOR PRINCIPAL==============================
     //============================Start ANIMACIONES JUGADOR 2==============================
-     this.anims.create(
-        {
-            key:'disparar2',
-            frames: this.anims.generateFrameNumbers('player2_disparar',{start: 5, end: 11}),
-            frameRate: 0.5,
-            repeat: 1
-        });
+
     
         this.anims.create(
         {
@@ -767,18 +755,11 @@ class LVL_1_Scene extends Phaser.Scene {
         {
             if(player.flipX == true){
                 this.bala.enableBody(true, player.x-30, player.y, true, true).setVelocity(-2000, 50);
-                player.anims.play('disparar',true);
                 socket.emit("Jugador-Disparo-Izquierda");
-
-    
     
             } else{
                 this.bala.enableBody(true, player.x+30, player.y, true, true).setVelocity(2000, 50);
-                player.anims.play('disparar',true);
-                socket.emit("Jugador-Disparo-Derecha");
-
-    
-    
+                socket.emit("Jugador-Disparo-Derecha");    
             }
     
     
@@ -829,13 +810,14 @@ class LVL_1_Scene extends Phaser.Scene {
 
         //Animacion predator de caminar
         //Cuanto quitamos las vidas al predator
-        if(gameStatePredator.vida<=0 ){
+        if(gameStatePredator.vida<=0){
                 gameStatePredator.vivo=false;
                 this.predator.anims.play('morirPredator',true);
                 this.predator.setSize(1,1);
                 this.predator.y+=16;
                 gameStatePredator.nuevoLaser=false;
                 socket.emit("Predator-muere");
+                gameStatePredator.cantidad=false;
 
 
         }
@@ -869,12 +851,13 @@ class LVL_1_Scene extends Phaser.Scene {
 
         }
         if(gameStatePredator.vivo==false && (player.x>=inicio_fin_mapa && player.x<=fin_fin_mapa)&&gameState.metaP2==true&&(this.player2.x>=inicio_fin_mapa && this.player2.x<=fin_fin_mapa)){
-            this.scene.stop('LVL_1_Scene');
+            gameStatePredator.vida=20;     
             gameState.vida=6;
-            gameStatePredator.vida=20;   
             gameStatePredator.vivo=true;     
+            this.scene.stop('LVL_1_Scene');
             this.scene.start('LVL_2_Scene');
         }
+
         if(gameState.bonus != "fly")
         {
             if (cursors.up.isDown && player.body.onFloor())

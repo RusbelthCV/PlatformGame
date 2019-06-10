@@ -16,7 +16,7 @@ var config =
         default: 'arcade',
         arcade:{
             gravity:{y: 500},
-            debug:true
+            debug:false
         }
     },
     scene: [LVL_1_Scene,LVL_2_Scene,GameOver_Scene1,GameOver_Scene2]
@@ -31,9 +31,9 @@ const gameState = {
     puente:false
 
 };   
-const gameStatePredator = {vida:20,vivo:true,laser:false,nuevoLaser:false,destruyeLaser:false}
+const gameStatePredator = {vida:0,vivo:true,laser:false,nuevoLaser:false,destruyeLaser:false}
 const gameStateDino={
-    vida:35,
+    vida:2,
     vivo:true,
     Fuego:false,
     disparo:0,

@@ -13,6 +13,11 @@ io.on('connection',function(socket)
         console.log("Click on the create lobby");
         socket.emit("beginCreate");
     });
+    socket.on("refresh",function()
+    {
+        console.log("refresh");
+        socket.broadcast.emit('actualizar');
+    });
     socket.on("redireccionar",function()
     {
         console.log("redirecciono");

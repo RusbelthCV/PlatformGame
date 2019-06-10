@@ -119,16 +119,25 @@
             //Obtención de la etiqueta button para poder darle un evento
             var button = document.getElementsByTagName("button")[0];
             //Agregamos el evento al escuchador, en este caso el botón
+        socket.on("actualizar",function()
+        {
+            location.reload();
+        });
+
             button.addEventListener("click",function()
             {
                 socket.emit("createLobby");    
                 insert();
+                socket.emit("refresh");    
+
             });
         });
         socket.on("beginCreate",function()
         {
             console.log("Holita al crear");
+
         });
+
         socket.on("redirect",function(data)
         {
 			EliminarSala();
@@ -183,6 +192,7 @@
                     var coincidencias = obj.responseText;
                     sala.innerHTML = "Listo";
                     socket.emit("redireccionar");
+                    EliminarSala();
                     window.location.href="View/index.php";
                 }
                 else

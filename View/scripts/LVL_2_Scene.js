@@ -100,7 +100,6 @@ class LVL_2_Scene extends Phaser.Scene {
         //Detecta si el compañero ha disparado a la izquierda   
         socket.on('Jugador-shoot-left',()=>{
             this.bala.enableBody(true, this.player2.x, this.player2.y, true, true).setVelocity(-2000, 50);
-            this.player2.anims.play('disparar2',true);
 
             console.log("Dispara a la izquierda");
 
@@ -111,7 +110,6 @@ class LVL_2_Scene extends Phaser.Scene {
 
             this.bala.enableBody(true, this.player2.x, this.player2.y, true, true).setVelocity(2000, 50);
             console.log("Dispara a la derecha");
-            this.player2.anims.play('disparar2',true);
 
         });    
         socket.on('DinoMuere',()=>{
@@ -140,10 +138,10 @@ class LVL_2_Scene extends Phaser.Scene {
 
     //======================JUGADOR PRINCIPAL=======================
      //JUGADOR1
-        player = this.physics.add.sprite(50, 900, 'player');//12200
+        player = this.physics.add.sprite(50, 1875, 'player');//12200
         player.setScale(0.25);
         //JUGADOR 2
-        this.player2 = this.physics.add.sprite(50, 900, 'player2_quieto');
+        this.player2 = this.physics.add.sprite(50, 1875, 'player2_quieto');
         this.player2.setScale(0.25);
         //CREAMOS LA BALA 
         this.bala = this.physics.add.sprite(player.x, player.y, 'bullet');
@@ -470,11 +468,9 @@ class LVL_2_Scene extends Phaser.Scene {
         {
             if(player.flipX == true){
                 this.bala.enableBody(true, player.x-30, player.y, true, true).setVelocity(-2000, 50);
-                player.anims.play('disparar',true);
                 socket.emit("Jugador-Disparo-Izquierda");
             } else{
                 this.bala.enableBody(true, player.x+30, player.y, true, true).setVelocity(2000, 50);
-                player.anims.play('disparar',true);
                 socket.emit("Jugador-Disparo-Derecha");  
 
         		
